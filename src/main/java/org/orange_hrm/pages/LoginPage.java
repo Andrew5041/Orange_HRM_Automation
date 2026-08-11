@@ -36,10 +36,11 @@ public class LoginPage {
         return new DashboardPage();
     }
 
-    public void loginWithFailure(String username, String password) {
+    public LoginPage loginWithFailure(String username, String password) {
         getDriver().findElement(usernameInput).sendKeys(username);
         getDriver().findElement(passwordInput).sendKeys(password);
         getDriver().findElement(loginButton).click();
+        return this;
     }
 
     public boolean isErrorMessagedDisplayed() {

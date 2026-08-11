@@ -17,9 +17,9 @@ public class LoginStatusTest {
 
     @ParameterizedTest
     @CsvSource({
-            "AdminE, admin123",
+            "AdminEna, admin123",
             "AdminD, admin123",
-            "Essena, admin123",
+            "EssEna, admin123",
             "Essdis, admin123"
     })
     public void shouldLoginOrFailBasedOnUserStatus(String username, String password) {
@@ -42,7 +42,7 @@ public class LoginStatusTest {
 
     public boolean shouldUserLogin(String username) {
 
-        List<String> enabledUsers = List.of("AdminE", "Essena");
+        List<String> enabledUsers = List.of("AdminEna", "EssEna");
         List<String> disabledUsers = List.of("AdminD", "Essdis");
 
         if (enabledUsers.contains(username)) return true;
