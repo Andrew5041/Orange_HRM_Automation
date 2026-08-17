@@ -1,53 +1,30 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.LoginPage;
 
-import java.util.List;
-import static org.orange_hrm.driver.DriverSingleton.quitDriver;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LoginStatusTest {
-
-    @AfterEach
-    public void quitBrowser() {
-        quitDriver();
-    }
+public class LoginStatusTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "AdminEna, admin123",
-            "AdminD, admin123",
-            "EssEna, admin123",
-            "Essdis, admin123"
+            "AdminEna, admin123, enabled",
+            "AdminD, admin123, disabled",
+            "EssEna, admin123, enabled",
+            "Essdis, admin123, disabled"
     })
-    public void shouldLoginOrFailBasedOnUserStatus(String username, String password) {
-
-        String url = "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login";
+    public void shouldLoginOrFailBasedOnUserStatus(String username, String password, String status) {
 
         LoginPage loginPage = new LoginPage();
-        loginPage.openLoginPage(url);
+        DashboardPage dashboardPage = new DashboardPage();
 
-        boolean shouldUserLogin = shouldUserLogin(username);
-
-        if (shouldUserLogin) {
-            DashboardPage dashboardPage = loginPage.loginSuccessfully(username, password);
-            Assertions.assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
+        if (status.equals("enabled")) {
+            loginPage.loginSuccessfully(username, password);
+            assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
         } else {
             loginPage.loginWithFailure(username, password);
-            Assertions.assertTrue(loginPage.isErrorMessagedDisplayed(), "Error: User should not login");
+            assertTrue(loginPage.isErrorMessagedDisplayed(), "Error: User should not login");
         }
-    }
-
-    public boolean shouldUserLogin(String username) {
-
-        List<String> enabledUsers = List.of("AdminEna", "EssEna");
-        List<String> disabledUsers = List.of("AdminD", "Essdis");
-
-        if (enabledUsers.contains(username)) return true;
-        if (disabledUsers.contains(username)) return false;
-
-        throw new IllegalArgumentException("Unrecognized user" + username);
     }
 }

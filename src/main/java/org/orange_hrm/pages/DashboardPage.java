@@ -1,20 +1,21 @@
 package org.orange_hrm.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.orange_hrm.driver.DriverSingleton;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
 public class DashboardPage {
-    private final By brandBanner = By.xpath("//div[@class='oxd-brand-banner']");
+
+    @FindBy(css = "div[class='oxd-brand-banner']")
+    WebElement brandBanner;
 
     public DashboardPage() {
-    }
-
-    private WebDriver getDriver() {
-        return DriverSingleton.getDriver();
+        PageFactory.initElements(getDriver(), this);
     }
 
     public boolean isBrandBannerPresent() {
-        return getDriver().findElement(brandBanner).isDisplayed();
+        return brandBanner.isDisplayed();
     }
 }
