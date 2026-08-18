@@ -11,11 +11,19 @@ public class DashboardPage {
     @FindBy(css = "div[class='oxd-brand-banner']")
     WebElement brandBanner;
 
+    @FindBy(xpath = "//span[text()='Admin']")
+    WebElement adminMenuButton;
+
     public DashboardPage() {
         PageFactory.initElements(getDriver(), this);
     }
 
     public boolean isBrandBannerPresent() {
         return brandBanner.isDisplayed();
+    }
+
+    public DashboardPage goToAdminPage(){
+        adminMenuButton.click();
+        return this;
     }
 }
