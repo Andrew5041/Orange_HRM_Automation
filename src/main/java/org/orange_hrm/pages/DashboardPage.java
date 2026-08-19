@@ -9,10 +9,10 @@ import static org.orange_hrm.driver.DriverSingleton.getDriver;
 public class DashboardPage {
 
     @FindBy(css = "div[class='oxd-brand-banner']")
-    WebElement brandBanner;
+    private WebElement brandBanner;
 
     @FindBy(xpath = "//span[text()='Admin']")
-    WebElement adminMenuButton;
+    private WebElement adminMenuButton;
 
     public DashboardPage() {
         PageFactory.initElements(getDriver(), this);

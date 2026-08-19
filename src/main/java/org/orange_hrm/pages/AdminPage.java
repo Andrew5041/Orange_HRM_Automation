@@ -10,13 +10,13 @@ import static org.orange_hrm.driver.DriverSingleton.getDriver;
 public class AdminPage {
 
     @FindBy(xpath = "//label[text()='Username']/ancestor::div[contains(@class, 'oxd-input-group')]//input")
-    WebElement usernameInput;
+    private WebElement usernameInput;
 
     @FindBy(xpath = "//button[@type='submit']")
-    WebElement searchButton;
+    private WebElement searchButton;
 
     @FindBy(xpath = "//div[@class='oxd-toast-content oxd-toast-content--info']//p[text()='No Records Found']")
-    WebElement noRecordsFoundPopup;
+    private WebElement noRecordsFoundPopup;
 
     public AdminPage() {
         PageFactory.initElements(getDriver(), this);
