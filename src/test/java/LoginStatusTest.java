@@ -17,13 +17,14 @@ public class LoginStatusTest extends BaseTest {
     public void shouldLoginOrFailBasedOnUserStatus(String username, String password, String status) {
 
         LoginPage loginPage = new LoginPage();
-        DashboardPage dashboardPage = new DashboardPage();
+        loginPage.enterLoginUsername(username);
+        loginPage.enterLoginPassword(password);
+        loginPage.clickLoginButton();
 
         if (status.equals("enabled")) {
-            loginPage.loginSuccessfully(username, password);
+            DashboardPage dashboardPage = new DashboardPage();
             assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
         } else {
-            loginPage.loginWithFailure(username, password);
             assertTrue(loginPage.isErrorMessagedDisplayed(), "Error: User should not login");
         }
     }
