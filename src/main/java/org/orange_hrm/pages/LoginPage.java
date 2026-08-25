@@ -24,18 +24,18 @@ public class LoginPage {
         PageFactory.initElements(getDriver(), this);
     }
 
-    public LoginPage loginSuccessfully(String username, String password) {
+    public LoginPage enterLoginUsername(String username){
         usernameInput.sendKeys(username);
-        passwordInput.sendKeys(password);
-        loginButton.click();
         return this;
     }
 
-    public LoginPage loginWithFailure(String username, String password) {
-        usernameInput.sendKeys(username);
+    public LoginPage enterLoginPassword(String password){
         passwordInput.sendKeys(password);
-        loginButton.click();
         return this;
+    }
+
+    public void clickLoginButton() {
+        loginButton.click();
     }
 
     public boolean isErrorMessagedDisplayed() {
