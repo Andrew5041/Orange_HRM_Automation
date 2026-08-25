@@ -1,5 +1,5 @@
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.orange_hrm.pages.AdminPage;
@@ -29,28 +29,22 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, Enabled"
-/*            "EssEna, ESS, Enabled",
-            "Essdis, ESS, Disabled"*/
+            "Admin, Admin, john Doe, Enabled"
     })
-    public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String status) {
+    public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
         AdminPage adminPage = new AdminPage();
         adminPage.enterAdminSearchUsername(username);
         adminPage.clickAdminSearchButton();
 
-/*        Assertions.assertAll(
-        () -> assertTrue(adminPage.isUsernamePresentInTable(username), "Username not found" + username),
-        () -> assertTrue(adminPage.isUserRolePresentInTable(role)),
-        () -> assertTrue(adminPage.isUserStatusPresentInTable(status)));*/
-
-        assertTrue(adminPage.isUserPresentInTable(username, role, status));
+        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status));
     }
 
-/*    @Test
+    @Test
     public void notRegisteredUserShouldNotBeFoundInUsersSearchResults() {
         AdminPage adminPage = new AdminPage();
-        adminPage.searchUser("user_that_does_not_exist_123");
+        adminPage.enterAdminSearchUsername("user_that_does_not_exist_123");
+        adminPage.clickAdminSearchButton();
 
-        assertTrue(adminPage.isNoRecordsFoundPopupVisible());*/
-    //}
+        assertTrue(adminPage.isNoRecordsFoundPopupVisible());
+    }
 }

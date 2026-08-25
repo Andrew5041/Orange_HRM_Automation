@@ -24,12 +24,12 @@ public class LoginPage {
         PageFactory.initElements(getDriver(), this);
     }
 
-    public LoginPage enterLoginUsername(String username){
+    public LoginPage enterLoginUsername(String username) {
         usernameInput.sendKeys(username);
         return this;
     }
 
-    public LoginPage enterLoginPassword(String password){
+    public LoginPage enterLoginPassword(String password) {
         passwordInput.sendKeys(password);
         return this;
     }
