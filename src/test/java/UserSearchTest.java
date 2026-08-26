@@ -29,12 +29,12 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, john Doe, Enabled"
+            "Admin, Admin, Beta, Enabled"
     })
     public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
         AdminPage adminPage = new AdminPage();
-        adminPage.enterAdminSearchUsername(username);
-        adminPage.clickAdminSearchButton();
+        adminPage.enterUsername(username);
+        adminPage.clickSearchButton();
 
         assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status));
     }
@@ -42,9 +42,27 @@ public class UserSearchTest extends BaseTest {
     @Test
     public void notRegisteredUserShouldNotBeFoundInUsersSearchResults() {
         AdminPage adminPage = new AdminPage();
-        adminPage.enterAdminSearchUsername("user_that_does_not_exist_123");
-        adminPage.clickAdminSearchButton();
+        adminPage.enterUsername("user_that_does_not_exist_123");
+        adminPage.clickSearchButton();
 
         assertTrue(adminPage.isNoRecordsFoundPopupVisible());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Admin, Admin, Beta, Enabled"
+    })
+    public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String employeeName, String status) {
+        AdminPage adminPage = new AdminPage();
+        adminPage.enterUsername(username);
+        adminPage.expandDropDownOptions("User Role");
+        adminPage.chooseDropDownOption(role);
+        adminPage.enterEmployeeName(employeeName);
+        adminPage.chooseEmployeeName();
+        adminPage.expandDropDownOptions("Status");
+        adminPage.chooseDropDownOption(status);
+        adminPage.clickSearchButton();
+
+        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status));
     }
 }
