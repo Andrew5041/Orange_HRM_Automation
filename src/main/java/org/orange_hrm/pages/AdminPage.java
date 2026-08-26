@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.orange_hrm.driver.DriverSingleton.getDriver;
@@ -89,6 +91,23 @@ public class AdminPage {
                 .anyMatch(text -> text.contains(username) &&
                         text.contains(role) &&
                         text.contains(status));*/
+    }
+
+    public List<String> getUserDetailsFromTableWithoutSearching(String expectedUsername) {
+        for (WebElement row : usersList) {
+
+            String actualUsername = row.findElement(By.xpath("./div[@role='cell'][2]")).getText().trim();
+
+            if (actualUsername.equals(expectedUsername)) {
+
+                String role = row.findElement(By.xpath("./div[@role='cell'][3]")).getText().trim();
+                String employeeName = row.findElement(By.xpath("./div[@role='cell'][4]")).getText().trim();
+                String status = row.findElement(By.xpath("./div[@role='cell'][5]")).getText().trim();
+
+                return Arrays.asList(actualUsername, role, employeeName, status);
+            }
+        }
+        return Collections.emptyList();
     }
 
     public boolean isNoRecordsFoundPopupVisible() {
