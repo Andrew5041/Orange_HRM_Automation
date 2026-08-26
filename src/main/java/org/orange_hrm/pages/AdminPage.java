@@ -16,17 +16,11 @@ public class AdminPage {
     @FindBy(xpath = "//label[text()='Username']/ancestor::div[contains(@class, 'oxd-input-group')]//input")
     private WebElement usernameInput;
 
-    @FindBy(xpath = "//label[text()='User Role']/ancestor::div[contains(@class, 'oxd-input-group')]//i")
-    private WebElement userRoleDropDownArrow;
-
     @FindBy(xpath = "//label[text()='Employee Name']/ancestor::div[contains(@class, 'oxd-input-group')]//input")
     private WebElement employeeNameInput;
 
     @FindBy(xpath = "//div[@role='listbox']//div[@role='option'][1]")
     private WebElement employeeNameAutocompleteOption;
-
-    @FindBy(xpath = "//label[text()='Status']/ancestor::div[contains(@class, 'oxd-input-group')]//i")
-    private WebElement statusDropDownArrow;
 
     @FindBy(xpath = "//button[@type='submit']")
     private WebElement searchButton;
