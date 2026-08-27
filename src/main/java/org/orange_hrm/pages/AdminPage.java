@@ -22,7 +22,7 @@ public class AdminPage {
     @FindBy(xpath = "//div[@role='listbox']//div[@role='option'][1]")
     private WebElement employeeNameAutocompleteOption;
 
-    @FindBy(xpath = "//button[@type='submit']")
+    @FindBy(css = "button[type='submit']")
     private WebElement searchButton;
 
     @FindBy(xpath = "//div[@class='oxd-toast-content oxd-toast-content--info']//p[text()='No Records Found']")
