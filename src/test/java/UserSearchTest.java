@@ -30,20 +30,20 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, manda user, Enabled"
+            "Admin, Admin, ali user, Enabled"
     })
     public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
         AdminPage adminPage = new AdminPage();
-        adminPage.enterUsername(username);
+        adminPage.enterInput("Username", username);
         adminPage.clickSearchButton();
 
-        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + " was not found");
+        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + "with its details was not found");
     }
 
     @Test
     public void notRegisteredUserShouldNotBeFoundInUsersSearchResults() {
         AdminPage adminPage = new AdminPage();
-        adminPage.enterUsername("user_that_does_not_exist_123");
+        adminPage.enterInput("Username", "user_that_does_not_exist_123");
         adminPage.clickSearchButton();
 
         assertTrue(adminPage.isNoRecordsFoundPopupVisible());
@@ -51,17 +51,17 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, manda user, Enabled"
+            "Admin, Admin, ali user, Enabled"
     })
     public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String employeeName, String status) {
         AdminPage adminPage = new AdminPage();
-        adminPage.enterUsername(username);
+        adminPage.enterInput("Username", username);
         adminPage.expandDropDownOptions("User Role");
-        adminPage.chooseDropDownOption(role);
-        adminPage.enterEmployeeName(employeeName);
-        adminPage.chooseEmployeeName();
+        adminPage.chooseOption(role);
+        adminPage.enterInput("Employee Name", employeeName);
+        adminPage.chooseOption(employeeName);
         adminPage.expandDropDownOptions("Status");
-        adminPage.chooseDropDownOption(status);
+        adminPage.chooseOption(status);
         adminPage.clickSearchButton();
 
         assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + " with role " + role + " with Employee Name " + employeeName + " and status " + status + " was not found");
@@ -69,12 +69,12 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, manda user, Enabled"
+            "Admin, Admin, ali user, Enabled"
     })
     public void registeredUsersShouldBeFoundInTableWithoutFiltering(String username, String role, String employeeName, String status) {
         AdminPage adminPage = new AdminPage();
 
-        List<String> actualUserDetails = adminPage.getUserDetailsFromTableWithoutSearching(username);
+        List<String> actualUserDetails = adminPage.getUserDetailsFromTable(username);
 
         assertAll(
                 () -> assertEquals(username, actualUserDetails.get(0), "User " + username + " was not found"),

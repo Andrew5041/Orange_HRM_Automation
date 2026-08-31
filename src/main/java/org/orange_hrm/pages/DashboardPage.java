@@ -18,12 +18,12 @@ public class DashboardPage {
         PageFactory.initElements(getDriver(), this);
     }
 
-    public boolean isBrandBannerPresent() {
-        return brandBanner.isDisplayed();
-    }
-
-    public DashboardPage goToAdminPage(){
+    public DashboardPage goToAdminPage() {
         adminMenuButton.click();
         return this;
+    }
+
+    public boolean isBrandBannerPresent() {
+        return brandBanner.isDisplayed();
     }
 }
