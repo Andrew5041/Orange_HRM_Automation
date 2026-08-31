@@ -10,8 +10,11 @@ public class LoginTest extends BaseTest {
     public void userShouldLoginSuccessfully() {
 
         LoginPage loginPage = new LoginPage();
+        loginPage.enterLoginUsername("Admin");
+        loginPage.enterLoginPassword("admin123");
+        loginPage.clickLoginButton();
+
         DashboardPage dashboardPage = new DashboardPage();
-        loginPage.loginSuccessfully("Admin", "admin123");
 
         assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
     }
