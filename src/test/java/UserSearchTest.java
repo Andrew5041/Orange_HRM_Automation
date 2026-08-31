@@ -14,8 +14,10 @@ import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
 public class UserSearchTest extends BaseTest {
 
+    private String loggedEmployeeName;
+
     @BeforeEach
-    public void setUpAdminPage() {
+    public void setUp() {
 
         getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
@@ -25,19 +27,22 @@ public class UserSearchTest extends BaseTest {
         loginPage.clickLoginButton();
 
         DashboardPage dashboardPage = new DashboardPage();
+        loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
         dashboardPage.goToAdminPage();
     }
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, ali user, Enabled"
+            "Admin, Admin, Enabled"
     })
-    public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
+    public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String status) {
         AdminPage adminPage = new AdminPage();
         adminPage.enterInput("Username", username);
+        adminPage.enterInput("Employee Name", loggedEmployeeName);
+        adminPage.chooseOption(loggedEmployeeName);
         adminPage.clickSearchButton();
 
-        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + "with its details was not found");
+        assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + "with its details was not found");
     }
 
     @Test
@@ -51,27 +56,27 @@ public class UserSearchTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, ali user, Enabled"
+            "Admin, Admin, Enabled"
     })
-    public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String employeeName, String status) {
+    public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String status) {
         AdminPage adminPage = new AdminPage();
         adminPage.enterInput("Username", username);
         adminPage.expandDropDownOptions("User Role");
         adminPage.chooseOption(role);
-        adminPage.enterInput("Employee Name", employeeName);
-        adminPage.chooseOption(employeeName);
+        adminPage.enterInput("Employee Name", loggedEmployeeName);
+        adminPage.chooseOption(loggedEmployeeName);
         adminPage.expandDropDownOptions("Status");
         adminPage.chooseOption(status);
         adminPage.clickSearchButton();
 
-        assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + " with role " + role + " with Employee Name " + employeeName + " and status " + status + " was not found");
+        assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + " with role " + role + " with Employee Name " + loggedEmployeeName + " and status " + status + " was not found");
     }
 
     @ParameterizedTest
     @CsvSource({
-            "Admin, Admin, ali user, Enabled"
+            "Admin, Admin, Enabled"
     })
-    public void registeredUsersShouldBeFoundInTableWithoutFiltering(String username, String role, String employeeName, String status) {
+    public void registeredUsersShouldBeFoundInTableWithoutFiltering(String username, String role, String status) {
         AdminPage adminPage = new AdminPage();
 
         List<String> actualUserDetails = adminPage.getUserDetailsFromTable(username);
@@ -79,7 +84,7 @@ public class UserSearchTest extends BaseTest {
         assertAll(
                 () -> assertEquals(username, actualUserDetails.get(0), "User " + username + " was not found"),
                 () -> assertEquals(role, actualUserDetails.get(1), "User Role " + role + " is not correct"),
-                () -> assertEquals(employeeName, actualUserDetails.get(2), "Employee Name " + employeeName + " is not correct"),
+                () -> assertEquals(loggedEmployeeName, actualUserDetails.get(2), "Employee Name " + loggedEmployeeName + " is not correct"),
                 () -> assertEquals(status, actualUserDetails.get(3), "Status " + status + " is not correct")
         );
     }
