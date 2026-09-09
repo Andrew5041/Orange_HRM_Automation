@@ -34,8 +34,9 @@ public class LoginPage {
         return this;
     }
 
-    public void clickLoginButton() {
+    public DashboardPage clickLoginButton() {
         loginButton.click();
+        return new DashboardPage();
     }
 
     public boolean isErrorMessagedDisplayed() {
