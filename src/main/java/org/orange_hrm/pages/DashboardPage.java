@@ -25,9 +25,9 @@ public class DashboardPage {
         PageFactory.initElements(getDriver(), this);
     }
 
-    public DashboardPage goToAdminPage() {
+    public AdminPage goToAdminPage() {
         adminMenuButton.click();
-        return this;
+        return new AdminPage();
     }
 
     public String getLoggedEmployeeName() {

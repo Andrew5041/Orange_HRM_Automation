@@ -6,29 +6,23 @@ import org.orange_hrm.pages.AdminPage;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.LoginPage;
 
-import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
 public class UserSearchTest extends BaseTest {
 
     private String loggedEmployeeName;
+    private AdminPage adminPage;
 
     @BeforeEach
     public void setUp() {
-
-        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-
         LoginPage loginPage = new LoginPage();
         loginPage.enterLoginUsername("Admin");
         loginPage.enterLoginPassword("admin123");
-        loginPage.clickLoginButton();
-
-        DashboardPage dashboardPage = new DashboardPage();
+        DashboardPage dashboardPage = loginPage.clickLoginButton();
         loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
-        dashboardPage.goToAdminPage();
+        adminPage = dashboardPage.goToAdminPage();
     }
 
     @ParameterizedTest
@@ -36,19 +30,17 @@ public class UserSearchTest extends BaseTest {
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String status) {
-        AdminPage adminPage = new AdminPage();
-        adminPage.enterInput("Username", username);
-        adminPage.enterInput("Employee Name", loggedEmployeeName);
+        adminPage.enterUsername(username);
+        adminPage.enterEmployeeName(loggedEmployeeName);
         adminPage.chooseOption(loggedEmployeeName);
         adminPage.clickSearchButton();
 
-        assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + "with its details was not found");
+        assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + " with provided details was not found");
     }
 
     @Test
     public void notRegisteredUserShouldNotBeFoundInUsersSearchResults() {
-        AdminPage adminPage = new AdminPage();
-        adminPage.enterInput("Username", "user_that_does_not_exist_123");
+        adminPage.enterUsername("user_that_does_not_exist_123");
         adminPage.clickSearchButton();
 
         assertTrue(adminPage.isNoRecordsFoundPopupVisible());
@@ -59,13 +51,12 @@ public class UserSearchTest extends BaseTest {
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String status) {
-        AdminPage adminPage = new AdminPage();
-        adminPage.enterInput("Username", username);
-        adminPage.expandDropDownOptions("User Role");
+        adminPage.enterUsername(username);
+        adminPage.expandUserRoleOptions();
         adminPage.chooseOption(role);
-        adminPage.enterInput("Employee Name", loggedEmployeeName);
+        adminPage.enterEmployeeName(loggedEmployeeName);
         adminPage.chooseOption(loggedEmployeeName);
-        adminPage.expandDropDownOptions("Status");
+        adminPage.expandStatusOptions();
         adminPage.chooseOption(status);
         adminPage.clickSearchButton();
 
@@ -77,7 +68,6 @@ public class UserSearchTest extends BaseTest {
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundInTableWithoutFiltering(String username, String role, String status) {
-        AdminPage adminPage = new AdminPage();
 
         List<String> actualUserDetails = adminPage.getUserDetailsFromTable(username);
 
