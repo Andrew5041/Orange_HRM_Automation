@@ -15,15 +15,15 @@ public class LoginStatusTest extends BaseTest {
             "Essdis, admin123, disabled"
     })
     public void shouldLoginOrFailBasedOnUserStatus(String username, String password, String status) {
-
         LoginPage loginPage = new LoginPage();
-        DashboardPage dashboardPage = new DashboardPage();
+        DashboardPage dashboardPage = loginPage
+                .enterLoginUsername(username)
+                .enterLoginPassword(password)
+                .clickLoginButton();
 
         if (status.equals("enabled")) {
-            loginPage.loginSuccessfully(username, password);
             assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
         } else {
-            loginPage.loginWithFailure(username, password);
             assertTrue(loginPage.isErrorMessagedDisplayed(), "Error: User should not login");
         }
     }
