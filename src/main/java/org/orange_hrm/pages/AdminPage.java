@@ -34,6 +34,12 @@ public class AdminPage {
     @FindBy(xpath = "//label[text()='Status']/ancestor::div[contains(@class, 'oxd-input-group')]//div[@class='oxd-select-wrapper']")
     private WebElement statusDropDownButton;
 
+    @FindBy(xpath = "//label[text()='Password']/following::input[1]")
+    private WebElement passwordInput;
+
+    @FindBy(xpath = "//label[text()='Confirm Password']/following::input[1]")
+    private WebElement confirmPasswordInput;
+
     @FindBy(xpath = "//div[@role='listbox']//div[@role='option']/span")
     private List<WebElement> optionsList;
 
@@ -61,11 +67,20 @@ public class AdminPage {
     @FindBy(css = "button[type='submit']")
     private WebElement searchButton;
 
+    @FindBy(xpath = "//button[text()=' Add ']")
+    private WebElement addButton;
+
+    @FindBy(xpath = "//button[text()=' Save ']")
+    private WebElement saveButton;
+
     @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']/div[@role='cell'][6]//button[@type='button'][1]")
     private List<WebElement> trashButton;
 
     @FindBy(xpath = "//div[contains(@class, 'orangehrm-modal-footer')]//button[contains(@class, 'oxd-button--medium oxd-button--label-danger')]")
     private WebElement confirmDeletionButton;
+
+    @FindBy(xpath = "//span[contains(@class, 'oxd-input-field-error-message')]")
+    private WebElement inputErrorMessage;
 
     @FindBy(xpath = "//div[@class='oxd-toast-content oxd-toast-content--info']//p[text()='No Records Found']")
     private WebElement noRecordsFoundPopup;
@@ -81,6 +96,16 @@ public class AdminPage {
 
     public AdminPage enterEmployeeName(String employeeName) {
         employeeNameInput.sendKeys(employeeName);
+        return this;
+    }
+
+    public AdminPage enterPassword(String password) {
+        passwordInput.sendKeys(password);
+        return this;
+    }
+
+    public AdminPage enterConfirmPassword(String password) {
+        confirmPasswordInput.sendKeys(password);
         return this;
     }
 
@@ -101,6 +126,19 @@ public class AdminPage {
 
     public AdminPage clickSearchButton() {
         searchButton.click();
+        return this;
+    }
+
+    public AdminPage clickAddButton() {
+        addButton.click();
+        return this;
+    }
+
+    public AdminPage clickSaveButton() {
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//span[contains(@class, 'oxd-input-field-error-message')]")));
+        saveButton.click();
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("oxd-loading-spinner")));
         return this;
     }
 
@@ -142,6 +180,7 @@ public class AdminPage {
             String actualUsername = usernameColumn.get(i).getText().trim();
             if (actualUsername.equals(username)) {
                 trashButton.get(i).click();
+                return this;
             }
         }
         throw new RuntimeException("Username " + username + " was not found in the table");
@@ -149,6 +188,7 @@ public class AdminPage {
 
 /*        if(!usernameColumn.isEmpty() && usernameColumn.get(0).getText().trim().equals(username)){
             trashButton.get(0).click();
+            return this;
         }
         throw new RuntimeException("Username " + username + " was not found in the table");*/
 
