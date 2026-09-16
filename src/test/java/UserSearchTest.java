@@ -2,9 +2,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.orange_hrm.pages.AdminPage;
-import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.LoginPage;
+import org.orange_hrm.pages.DashboardPage;
+import org.orange_hrm.pages.AdminPage;
 
 import java.util.List;
 
@@ -77,5 +77,23 @@ public class UserSearchTest extends BaseTest {
                 () -> assertEquals(loggedEmployeeName, actualUserDetails.get(2), "Employee Name " + loggedEmployeeName + " is not correct"),
                 () -> assertEquals(status, actualUserDetails.get(3), "Status " + status + " is not correct")
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Admin, Admin, Enabled",
+            "Tom, ESS, Disabled"
+    })
+    public void resettingShouldClearAllFiltersFields(String username, String role, String status){
+        adminPage.enterUsername(username);
+        adminPage.expandUserRoleOptions();
+        adminPage.chooseOption(role);
+        adminPage.enterEmployeeName(loggedEmployeeName);
+        adminPage.chooseOption(loggedEmployeeName);
+        adminPage.expandStatusOptions();
+        adminPage.chooseOption(status);
+        adminPage.clickResetButton();
+
+        assertTrue(adminPage.areAllFiltersFieldsClear(), "Not all the filters fields are empty");
     }
 }
