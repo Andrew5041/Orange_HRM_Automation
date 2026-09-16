@@ -25,7 +25,6 @@ public class UserRemoveTest extends BaseTest {
         adminPage.clickSearchButton();
         adminPage.removeSearchedUser("testuser123");
         adminPage.clickConfirmDeletionButton();
-        adminPage.enterUsername("testuser123");
         adminPage.clickSearchButton();
 
         assertTrue(adminPage.isNoRecordsFoundPopupVisible());
