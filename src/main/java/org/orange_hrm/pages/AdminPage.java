@@ -1,13 +1,10 @@
 package org.orange_hrm.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.orange_hrm.helpers.WaitHelper;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -15,6 +12,8 @@ import java.util.NoSuchElementException;
 import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
 public class AdminPage {
+
+    private WaitHelper waitHelper;
 
     @FindBy(xpath = "//label[text()='Username']/following::input[1]")
     private WebElement usernameInput;
@@ -73,20 +72,36 @@ public class AdminPage {
     @FindBy(xpath = "//button[text()=' Save ']")
     private WebElement saveButton;
 
+    @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']//span[contains(@class, 'oxd-checkbox-input')][1]")
+    private List<WebElement> checkBox;
+
     @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']/div[@role='cell'][6]//button[@type='button'][1]")
     private List<WebElement> trashButton;
 
     @FindBy(xpath = "//div[contains(@class, 'orangehrm-modal-footer')]//button[contains(@class, 'oxd-button--medium oxd-button--label-danger')]")
     private WebElement confirmDeletionButton;
 
+    @FindBy(xpath = "//div[contains(@class, 'orangehrm-horizontal-padding')]//button[contains(@class, 'oxd-button--label-danger')]")
+    private WebElement deleteSelectedButton;
+
     @FindBy(xpath = "//span[contains(@class, 'oxd-input-field-error-message')]")
     private WebElement inputErrorMessage;
+
+    @FindBy(className = "oxd-loading-spinner")
+    private WebElement loadingSpinner;
+
+    @FindBy(className = "orangehrm-container")
+    private WebElement searchResultsContainer;
+
+    @FindBy(xpath = "//span[contains(@class, 'oxd-text') and text()='No Records Found']")
+    private WebElement noRecordsFoundTableText;
 
     @FindBy(xpath = "//div[@class='oxd-toast-content oxd-toast-content--info']//p[text()='No Records Found']")
     private WebElement noRecordsFoundPopup;
 
     public AdminPage() {
         PageFactory.initElements(getDriver(), this);
+        waitHelper = new WaitHelper();
     }
 
     public AdminPage enterUsername(String username) {
@@ -126,6 +141,8 @@ public class AdminPage {
 
     public AdminPage clickSearchButton() {
         searchButton.click();
+        waitHelper.waitForInvisibility(loadingSpinner);
+        waitHelper.waitForVisibility(searchResultsContainer);
         return this;
     }
 
@@ -135,15 +152,20 @@ public class AdminPage {
     }
 
     public AdminPage clickSaveButton() {
-        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//span[contains(@class, 'oxd-input-field-error-message')]")));
+        waitHelper.waitForInvisibility(inputErrorMessage);
         saveButton.click();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("oxd-loading-spinner")));
+        waitHelper.waitForInvisibility(loadingSpinner);
+        return this;
+    }
+
+    public AdminPage clickDeleteSelectedButton() {
+        waitHelper.waitForElementToBeClickable(deleteSelectedButton).click();
         return this;
     }
 
     public AdminPage clickConfirmDeletionButton() {
-        confirmDeletionButton.click();
+        waitHelper.waitForElementToBeClickable(confirmDeletionButton).click();
+        waitHelper.waitForInvisibility(loadingSpinner);
         return this;
     }
 
@@ -173,9 +195,6 @@ public class AdminPage {
 
     public AdminPage removeSearchedUser(String username) {
 
-        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("oxd-loading-spinner")));
-
         for (int i = 0; i < usersList.size(); i++) {
             String actualUsername = usernameColumn.get(i).getText().trim();
             if (actualUsername.equals(username)) {
@@ -186,11 +205,23 @@ public class AdminPage {
         throw new RuntimeException("Username " + username + " was not found in the table");
     }
 
-/*        if(!usernameColumn.isEmpty() && usernameColumn.get(0).getText().trim().equals(username)){
+/*        if(!usernameColumn.isEmpty() && usernameColumn.get(0).getText().trim().equals(username)) {
             trashButton.get(0).click();
             return this;
         }
         throw new RuntimeException("Username " + username + " was not found in the table");*/
+
+    public AdminPage markCheckboxForSearchedUser(String username) {
+
+        for (int i = 0; i < usersList.size(); i++) {
+            String actualUsername = usernameColumn.get(i).getText().trim();
+            if (actualUsername.equals(username) && !checkBox.get(i).isSelected()) {
+                checkBox.get(i).click();
+                return this;
+            }
+        }
+        throw new RuntimeException("Username " + username + " was not found in the table");
+    }
 
     public boolean isUsernameFieldEmpty() {
         return usernameInput.getDomProperty("value").trim().isEmpty();
@@ -230,6 +261,10 @@ public class AdminPage {
 
     public boolean isNoRecordsFoundPopupVisible() {
         return noRecordsFoundPopup.isDisplayed();
+    }
+
+    public boolean isNoRecordsFoundTextVisible() {
+        return noRecordsFoundTableText.isDisplayed();
     }
 }
 

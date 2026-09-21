@@ -25,9 +25,9 @@ public class UserAddAndRemoveTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "apuser123, Admin, Enabled, abc123def"
+            "apuser12345, Admin, Enabled, abc123def"
     })
-    public void userShouldBeSuccesfullyAddedAndRemovedFromSearchResults(String username, String role, String status, String password) {
+    public void userShouldBeSuccessfullyAddedAndRemovedFromSearchResults(String username, String role, String status, String password) {
         adminPage.clickAddButton();
         adminPage.expandUserRoleOptions();
         adminPage.chooseOption(role);
