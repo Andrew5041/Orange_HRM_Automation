@@ -2,18 +2,10 @@ package org.orange_hrm.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.orange_hrm.helpers.WaitHelper;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-import static org.orange_hrm.driver.DriverSingleton.getDriver;
-
-public class AdminPage {
-
-    private WaitHelper waitHelper;
+public class AdminPage extends BasePage {
 
     @FindBy(xpath = "//label[text()='Username']/following::input[1]")
     private WebElement usernameInput;
@@ -24,7 +16,7 @@ public class AdminPage {
     @FindBy(xpath = "//label[text()='Employee Name']/following::input[1]")
     private WebElement employeeNameInput;
 
-    @FindBy(xpath = "//label[text()='User Role']/ancestor::div[contains(@class, 'oxd-input-group')]//div[@class='oxd-select-text-input']")
+    @FindBy(xpath = "//label[text()='Status']/ancestor::div[contains(@class, 'oxd-input-group')]//div[@class='oxd-select-text-input']")
     private WebElement statusDropDown;
 
     @FindBy(xpath = "//label[text()='User Role']/ancestor::div[contains(@class, 'oxd-input-group')]//div[@class='oxd-select-wrapper']")
@@ -99,11 +91,6 @@ public class AdminPage {
     @FindBy(xpath = "//div[@class='oxd-toast-content oxd-toast-content--info']//p[text()='No Records Found']")
     private WebElement noRecordsFoundPopup;
 
-    public AdminPage() {
-        PageFactory.initElements(getDriver(), this);
-        waitHelper = new WaitHelper();
-    }
-
     public AdminPage enterUsername(String username) {
         usernameInput.sendKeys(username);
         return this;
@@ -125,47 +112,47 @@ public class AdminPage {
     }
 
     public AdminPage expandUserRoleOptions() {
-        userRoleDropDownButton.click();
+        clickButton(userRoleDropDownButton);
         return this;
     }
 
     public AdminPage expandStatusOptions() {
-        statusDropDownButton.click();
+        clickButton(statusDropDown);
         return this;
     }
 
     public AdminPage clickResetButton() {
-        resetButton.click();
+        clickButton(resetButton);
         return this;
     }
 
     public AdminPage clickSearchButton() {
-        searchButton.click();
-        waitHelper.waitForInvisibility(loadingSpinner);
-        waitHelper.waitForVisibility(searchResultsContainer);
+        clickButton(searchButton);
+        waitForElementToDisappear(loadingSpinner);
+        waitForElementToAppear(searchResultsContainer);
         return this;
     }
 
     public AdminPage clickAddButton() {
-        addButton.click();
+        clickButton(addButton);
         return this;
     }
 
     public AdminPage clickSaveButton() {
-        waitHelper.waitForInvisibility(inputErrorMessage);
-        saveButton.click();
-        waitHelper.waitForInvisibility(loadingSpinner);
+        waitForElementToDisappear(inputErrorMessage);
+        clickButton(saveButton);
+        waitForElementToDisappear(loadingSpinner);
         return this;
     }
 
     public AdminPage clickDeleteSelectedButton() {
-        waitHelper.waitForElementToBeClickable(deleteSelectedButton).click();
+        clickButton(deleteSelectedButton);
         return this;
     }
 
     public AdminPage clickConfirmDeletionButton() {
-        waitHelper.waitForElementToBeClickable(confirmDeletionButton).click();
-        waitHelper.waitForInvisibility(loadingSpinner);
+        clickButton(confirmDeletionButton);
+        waitForElementToDisappear(loadingSpinner);
         return this;
     }
 
@@ -198,7 +185,7 @@ public class AdminPage {
         for (int i = 0; i < usersList.size(); i++) {
             String actualUsername = usernameColumn.get(i).getText().trim();
             if (actualUsername.equals(username)) {
-                trashButton.get(i).click();
+                clickButton(trashButton.get(i));
                 return this;
             }
         }
@@ -216,7 +203,7 @@ public class AdminPage {
         for (int i = 0; i < usersList.size(); i++) {
             String actualUsername = usernameColumn.get(i).getText().trim();
             if (actualUsername.equals(username) && !checkBox.get(i).isSelected()) {
-                checkBox.get(i).click();
+                clickButton(checkBox.get(i));
                 return this;
             }
         }
@@ -243,6 +230,31 @@ public class AdminPage {
         return isUsernameFieldEmpty() && isUserRoleFieldEmpty() && isEmployeeNameFieldEmpty() && isStatusFieldEmpty();
     }
 
+    public List<String> getRandomUserDetailsFromTable() {
+
+        List<Integer> nonAdminRowIndices = new ArrayList<>();
+
+        for (int i = 0; i < usersList.size(); i++) {
+            String username = usernameColumn.get(i).getText().trim();
+            if (!username.equalsIgnoreCase("Admin")) {
+                nonAdminRowIndices.add(i);
+            }
+        }
+
+        Random random = new Random();
+
+        int min = 0;
+        int max = nonAdminRowIndices.size();
+
+        int randomRow = random.nextInt(min, max);
+
+        return Arrays.asList(
+                usernameColumn.get(randomRow).getText().trim(),
+                roleColumn.get(randomRow).getText().trim(),
+                employeeColumn.get(randomRow).getText().trim(),
+                statusColumn.get(randomRow).getText().trim());
+    }
+
     public List<String> getUserDetailsFromTable(String expectedUsername) {
 
         for (int i = 0; i < usersList.size(); i++) {
@@ -257,10 +269,6 @@ public class AdminPage {
             }
         }
         throw new NoSuchElementException("User " + expectedUsername + " was not found in results table");
-    }
-
-    public boolean isNoRecordsFoundPopupVisible() {
-        return noRecordsFoundPopup.isDisplayed();
     }
 
     public boolean isNoRecordsFoundTextVisible() {

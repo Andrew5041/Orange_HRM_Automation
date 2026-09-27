@@ -6,6 +6,8 @@ import org.orange_hrm.pages.LoginPage;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.AdminPage;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserRemoveTest extends BaseTest {
@@ -15,21 +17,27 @@ public class UserRemoveTest extends BaseTest {
     @BeforeEach
     public void setUp() {
         LoginPage loginPage = new LoginPage();
-        loginPage.enterLoginUsername("Admin");
-        loginPage.enterLoginPassword("admin123");
+        loginPage
+                .enterLoginUsername("Admin")
+                .enterLoginPassword("admin123");
         DashboardPage dashboardPage = loginPage.clickLoginButton();
         adminPage = dashboardPage.goToAdminPage();
     }
 
     @Test
     public void removedUserShouldNotBeFoundInUsersSearchResults() {
-        adminPage.enterUsername("testuser123");
-        adminPage.clickSearchButton();
-        adminPage.removeSearchedUser("testuser123");
-        adminPage.clickConfirmDeletionButton();
-        adminPage.clickSearchButton();
 
-        assertTrue(adminPage.isNoRecordsFoundPopupVisible());
+        List<String> randomUserDetails = adminPage.getRandomUserDetailsFromTable();
+        String username = randomUserDetails.get(0);
+
+        adminPage
+                .enterUsername(username)
+                .clickSearchButton()
+                .removeSearchedUser(username)
+                .clickConfirmDeletionButton()
+                .clickSearchButton();
+
+        assertTrue(adminPage.isNoRecordsFoundTextVisible());
     }
 
     @ParameterizedTest
@@ -38,14 +46,16 @@ public class UserRemoveTest extends BaseTest {
     })
     public void removedUserByDeleteSelectedButtonShouldNotBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
 
-        adminPage.enterUsername(username);
-        adminPage.clickSearchButton();
+        adminPage
+                .enterUsername(username)
+                .clickSearchButton();
 
         assertTrue(adminPage.isUserPresentInTable(username, role, employeeName, status), "User " + username + " with provided details was not found");
 
-        adminPage.markCheckboxForSearchedUser(username);
-        adminPage.clickDeleteSelectedButton();
-        adminPage.clickConfirmDeletionButton();
+        adminPage
+                .markCheckboxForSearchedUser(username)
+                .clickDeleteSelectedButton()
+                .clickConfirmDeletionButton();
 
         assertTrue(adminPage.isNoRecordsFoundTextVisible());
     }

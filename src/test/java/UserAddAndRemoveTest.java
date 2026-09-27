@@ -16,8 +16,9 @@ public class UserAddAndRemoveTest extends BaseTest {
     @BeforeEach
     public void setUp() {
         LoginPage loginPage = new LoginPage();
-        loginPage.enterLoginUsername("Admin");
-        loginPage.enterLoginPassword("admin123");
+        loginPage
+                .enterLoginUsername("Admin")
+                .enterLoginPassword("admin123");
         DashboardPage dashboardPage = loginPage.clickLoginButton();
         loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
         adminPage = dashboardPage.goToAdminPage();
@@ -28,23 +29,24 @@ public class UserAddAndRemoveTest extends BaseTest {
             "apuser12345, Admin, Enabled, abc123def"
     })
     public void userShouldBeSuccessfullyAddedAndRemovedFromSearchResults(String username, String role, String status, String password) {
-        adminPage.clickAddButton();
-        adminPage.expandUserRoleOptions();
-        adminPage.chooseOption(role);
-        adminPage.enterEmployeeName(loggedEmployeeName);
-        adminPage.chooseOption(loggedEmployeeName);
-        adminPage.expandStatusOptions();
-        adminPage.chooseOption(status);
-        adminPage.enterUsername(username);
-        adminPage.enterPassword(password);
-        adminPage.enterConfirmPassword(password);
-        adminPage.clickSaveButton();
-        adminPage.enterUsername(username);
-        adminPage.clickSearchButton();
-        adminPage.removeSearchedUser(username);
-        adminPage.clickConfirmDeletionButton();
-        adminPage.clickSearchButton();
+        adminPage
+                .clickAddButton()
+                .expandUserRoleOptions()
+                .chooseOption(role)
+                .enterEmployeeName(loggedEmployeeName)
+                .chooseOption(loggedEmployeeName)
+                .expandStatusOptions()
+                .chooseOption(status)
+                .enterUsername(username)
+                .enterPassword(password)
+                .enterConfirmPassword(password)
+                .clickSaveButton()
+                .enterUsername(username)
+                .clickSearchButton()
+                .removeSearchedUser(username)
+                .clickConfirmDeletionButton()
+                .clickSearchButton();
 
-        assertTrue(adminPage.isNoRecordsFoundPopupVisible());
+        assertTrue(adminPage.isNoRecordsFoundTextVisible());
     }
 }
