@@ -2,9 +2,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.orange_hrm.pages.AdminPage;
-import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.LoginPage;
+import org.orange_hrm.pages.DashboardPage;
+import org.orange_hrm.pages.AdminPage;
 
 import java.util.List;
 
@@ -18,8 +18,9 @@ public class UserSearchTest extends BaseTest {
     @BeforeEach
     public void setUp() {
         LoginPage loginPage = new LoginPage();
-        loginPage.enterLoginUsername("Admin");
-        loginPage.enterLoginPassword("admin123");
+        loginPage
+                .enterLoginUsername("Admin")
+                .enterLoginPassword("admin123");
         DashboardPage dashboardPage = loginPage.clickLoginButton();
         loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
         adminPage = dashboardPage.goToAdminPage();
@@ -30,20 +31,22 @@ public class UserSearchTest extends BaseTest {
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String status) {
-        adminPage.enterUsername(username);
-        adminPage.enterEmployeeName(loggedEmployeeName);
-        adminPage.chooseOption(loggedEmployeeName);
-        adminPage.clickSearchButton();
+        adminPage
+                .enterUsername(username)
+                .enterEmployeeName(loggedEmployeeName)
+                .chooseOption(loggedEmployeeName)
+                .clickSearchButton();
 
         assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + " with provided details was not found");
     }
 
     @Test
     public void notRegisteredUserShouldNotBeFoundInUsersSearchResults() {
-        adminPage.enterUsername("user_that_does_not_exist_123");
-        adminPage.clickSearchButton();
+        adminPage
+                .enterUsername("user_that_does_not_exist_123")
+                .clickSearchButton();
 
-        assertTrue(adminPage.isNoRecordsFoundPopupVisible());
+        assertTrue(adminPage.isNoRecordsFoundTextVisible());
     }
 
     @ParameterizedTest
@@ -51,14 +54,15 @@ public class UserSearchTest extends BaseTest {
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String status) {
-        adminPage.enterUsername(username);
-        adminPage.expandUserRoleOptions();
-        adminPage.chooseOption(role);
-        adminPage.enterEmployeeName(loggedEmployeeName);
-        adminPage.chooseOption(loggedEmployeeName);
-        adminPage.expandStatusOptions();
-        adminPage.chooseOption(status);
-        adminPage.clickSearchButton();
+        adminPage
+                .enterUsername(username)
+                .expandUserRoleOptions()
+                .chooseOption(role)
+                .enterEmployeeName(loggedEmployeeName)
+                .chooseOption(loggedEmployeeName)
+                .expandStatusOptions()
+                .chooseOption(status)
+                .clickSearchButton();
 
         assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + " with role " + role + " with Employee Name " + loggedEmployeeName + " and status " + status + " was not found");
     }
@@ -77,5 +81,24 @@ public class UserSearchTest extends BaseTest {
                 () -> assertEquals(loggedEmployeeName, actualUserDetails.get(2), "Employee Name " + loggedEmployeeName + " is not correct"),
                 () -> assertEquals(status, actualUserDetails.get(3), "Status " + status + " is not correct")
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Admin, Admin, Enabled",
+            "Tom, ESS, Disabled"
+    })
+    public void resettingShouldClearAllFiltersFields(String username, String role, String status){
+        adminPage
+                .enterUsername(username)
+                .expandUserRoleOptions()
+                .chooseOption(role)
+                .enterEmployeeName(loggedEmployeeName)
+                .chooseOption(loggedEmployeeName)
+                .expandStatusOptions()
+                .chooseOption(status)
+                .clickResetButton();
+
+        assertTrue(adminPage.areAllFiltersFieldsClear(), "Not all the filters fields are empty");
     }
 }
