@@ -16,6 +16,10 @@ public class BasePage {
         waitHelper = new WaitHelper();
     }
 
+    public void refreshPage() {
+        getDriver().navigate().refresh();
+    }
+
     public void clickButton(WebElement webElement) {
         try {
             webElement.click();

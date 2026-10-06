@@ -1,5 +1,6 @@
 package org.orange_hrm.pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -67,8 +68,11 @@ public class AdminPage extends BasePage {
     @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']//span[contains(@class, 'oxd-checkbox-input')][1]")
     private List<WebElement> checkBox;
 
-    @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']/div[@role='cell'][6]//button[@type='button'][1]")
+    @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']//div[@role='cell'][6]//button[@type='button'][1]")
     private List<WebElement> trashButton;
+
+    @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']//div[@role='cell'][6]//button[@type='button'][2]")
+    private List<WebElement> editButton;
 
     @FindBy(xpath = "//div[contains(@class, 'orangehrm-modal-footer')]//button[contains(@class, 'oxd-button--medium oxd-button--label-danger')]")
     private WebElement confirmDeletionButton;
@@ -92,6 +96,9 @@ public class AdminPage extends BasePage {
     private WebElement noRecordsFoundPopup;
 
     public AdminPage enterUsername(String username) {
+        if (!(usernameInput.getDomProperty("value") == null)) {
+            usernameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE);
+        }
         usernameInput.sendKeys(username);
         return this;
     }
@@ -156,6 +163,12 @@ public class AdminPage extends BasePage {
         return this;
     }
 
+    public AdminPage refresh() {
+        refreshPage();
+        waitForElementToDisappear(loadingSpinner);
+        return this;
+    }
+
     public AdminPage chooseOption(String option) {
         optionsList.stream()
                 .filter(element -> Arrays.stream(option.split("\\s+"))
@@ -197,6 +210,18 @@ public class AdminPage extends BasePage {
             return this;
         }
         throw new RuntimeException("Username " + username + " was not found in the table");*/
+
+    public AdminPage editSearchedUser(String username) {
+
+        for (int i = 0; i < usersList.size(); i++) {
+            String actualUsername = usernameColumn.get(i).getText().trim();
+            if (actualUsername.equals(username)) {
+                clickButton(editButton.get(i));
+                return this;
+            }
+        }
+        throw new RuntimeException("Username " + username + " was not found in the table");
+    }
 
     public AdminPage markCheckboxForSearchedUser(String username) {
 
