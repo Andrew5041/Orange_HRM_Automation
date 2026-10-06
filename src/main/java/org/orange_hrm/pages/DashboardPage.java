@@ -14,9 +14,9 @@ public class DashboardPage extends BasePage {
     @FindBy(css = ".oxd-userdropdown-name")
     private WebElement loggedEmployeeName;
 
-    public AdminPage goToAdminPage() {
+    public DashboardPage goToAdminPage() {
         clickButton(adminMenuButton);
-        return new AdminPage();
+        return this;
     }
 
     public String getLoggedEmployeeName() {

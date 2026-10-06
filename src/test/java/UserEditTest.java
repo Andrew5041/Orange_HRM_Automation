@@ -1,9 +1,7 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.orange_hrm.pages.AdminPage;
 import org.orange_hrm.pages.DashboardPage;
-import org.orange_hrm.pages.LoginPage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,18 +9,7 @@ public class UserEditTest extends BaseTest {
 
     private AdminPage adminPage;
 
-    private String loggedEmployeeName;
-
-    @BeforeEach
-    public void setUp() {
-        LoginPage loginPage = new LoginPage();
-        loginPage
-                .enterLoginUsername("Admin")
-                .enterLoginPassword("admin123");
-        DashboardPage dashboardPage = loginPage.clickLoginButton();
-        loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
-        adminPage = dashboardPage.goToAdminPage();
-    }
+    private DashboardPage dashboardPage;
 
     @ParameterizedTest
     @CsvSource({
@@ -33,6 +20,14 @@ public class UserEditTest extends BaseTest {
         String newUsername = "Tomasz";
         String newRole = "Admin";
         String newStatus = "Disabled";
+
+        adminPage = new AdminPage();
+
+        dashboardPage = new DashboardPage();
+
+        String loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
+
+        dashboardPage.goToAdminPage();
 
         adminPage
                 .clickAddButton()

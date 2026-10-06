@@ -1,8 +1,6 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.orange_hrm.pages.LoginPage;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.AdminPage;
 
@@ -12,25 +10,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserSearchTest extends BaseTest {
 
-    private String loggedEmployeeName;
     private AdminPage adminPage;
 
-    @BeforeEach
-    public void setUp() {
-        LoginPage loginPage = new LoginPage();
-        loginPage
-                .enterLoginUsername("Admin")
-                .enterLoginPassword("admin123");
-        DashboardPage dashboardPage = loginPage.clickLoginButton();
-        loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
-        adminPage = dashboardPage.goToAdminPage();
-    }
+    private DashboardPage dashboardPage;
 
     @ParameterizedTest
     @CsvSource({
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundInUsersSearchResults(String username, String role, String status) {
+
+        adminPage = new AdminPage();
+
+        dashboardPage = new DashboardPage();
+
+        String loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
+
+        dashboardPage.goToAdminPage();
+
         adminPage
                 .enterUsername(username)
                 .enterEmployeeName(loggedEmployeeName)
@@ -49,11 +46,23 @@ public class UserSearchTest extends BaseTest {
         assertTrue(adminPage.isNoRecordsFoundTextVisible());
     }
 
+    //TODO:
+    //przerzucic tą metodę do innej klasy, ktora nie korzysta z DashBoardPage
+
     @ParameterizedTest
     @CsvSource({
             "Admin, Admin, Enabled"
     })
     public void registeredUsersShouldBeFoundWhenSearchingByAllFilters(String username, String role, String status) {
+
+        adminPage = new AdminPage();
+
+        dashboardPage = new DashboardPage();
+
+        String loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
+
+        dashboardPage.goToAdminPage();
+
         adminPage
                 .enterUsername(username)
                 .expandUserRoleOptions()
@@ -75,6 +84,14 @@ public class UserSearchTest extends BaseTest {
 
         List<String> actualUserDetails = adminPage.getUserDetailsFromTable(username);
 
+        adminPage = new AdminPage();
+
+        dashboardPage = new DashboardPage();
+
+        String loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
+
+        dashboardPage.goToAdminPage();
+
         assertAll(
                 () -> assertEquals(username, actualUserDetails.get(0), "User " + username + " was not found"),
                 () -> assertEquals(role, actualUserDetails.get(1), "User Role " + role + " is not correct"),
@@ -89,6 +106,15 @@ public class UserSearchTest extends BaseTest {
             "Tom, ESS, Disabled"
     })
     public void resettingShouldClearAllFiltersFields(String username, String role, String status){
+
+        adminPage = new AdminPage();
+
+        dashboardPage = new DashboardPage();
+
+        String loggedEmployeeName = dashboardPage.getLoggedEmployeeName();
+
+        dashboardPage.goToAdminPage();
+
         adminPage
                 .enterUsername(username)
                 .expandUserRoleOptions()
