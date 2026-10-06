@@ -1,19 +1,15 @@
 import org.junit.jupiter.api.Test;
 import org.orange_hrm.pages.DashboardPage;
-import org.orange_hrm.pages.LoginPage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginTest extends BaseTest {
 
+    private DashboardPage dashboardPage;
+
     @Test
     public void userShouldLoginSuccessfully() {
-        LoginPage loginPage = new LoginPage();
-        DashboardPage dashboardPage = loginPage
-                .enterLoginUsername("Admin")
-                .enterLoginPassword("admin123")
-                .clickLoginButton();
-
+        dashboardPage = new DashboardPage();
         assertTrue(dashboardPage.isBrandBannerPresent(), "User was not successfully logged in");
     }
 }

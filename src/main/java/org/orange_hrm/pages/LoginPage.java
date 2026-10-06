@@ -6,7 +6,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
-public class LoginPage {
+public class LoginPage extends BasePage{
 
     @FindBy(name = "username")
     private WebElement usernameInput;
@@ -25,18 +25,18 @@ public class LoginPage {
     }
 
     public LoginPage enterLoginUsername(String username) {
-        usernameInput.sendKeys(username);
+        type(usernameInput, username);
         return this;
     }
 
     public LoginPage enterLoginPassword(String password) {
-        passwordInput.sendKeys(password);
+        type(passwordInput, password);
         return this;
     }
 
-    public DashboardPage clickLoginButton() {
-        loginButton.click();
-        return new DashboardPage();
+    public LoginPage clickLoginButton() {
+        clickButton(loginButton);
+        return this;
     }
 
     public boolean isErrorMessagedDisplayed() {
