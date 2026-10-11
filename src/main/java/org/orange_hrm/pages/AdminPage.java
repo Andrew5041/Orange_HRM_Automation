@@ -83,9 +83,6 @@ public class AdminPage extends BasePage {
     @FindBy(xpath = "//span[contains(@class, 'oxd-input-field-error-message')]")
     private WebElement inputErrorMessage;
 
-    @FindBy(className = "oxd-loading-spinner")
-    private WebElement loadingSpinner;
-
     @FindBy(className = "orangehrm-container")
     private WebElement searchResultsContainer;
 

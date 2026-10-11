@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,13 +12,13 @@ public class UserRemoveTest extends BaseTest {
 
     private AdminPage adminPage;
 
-    //TODO:
-    //Jak zrobić żeby nie powtarzać admin = new AdminPage był tylko raz
+    @BeforeEach
+    public void setUp() {
+        adminPage = new AdminPage();
+    }
 
     @Test
     public void removedUserShouldNotBeFoundInUsersSearchResults() {
-
-        adminPage = new AdminPage();
 
         List<String> randomUserDetails = adminPage.getRandomUserDetailsFromTable();
         String username = randomUserDetails.get(0);
@@ -37,8 +38,6 @@ public class UserRemoveTest extends BaseTest {
             "TuwaiqNasser111, ESS, Timothy Amiano, Enabled"
     })
     public void removedUserByDeleteSelectedButtonShouldNotBeFoundInUsersSearchResults(String username, String role, String employeeName, String status) {
-
-        adminPage = new AdminPage();
 
         adminPage
                 .enterUsername(username)

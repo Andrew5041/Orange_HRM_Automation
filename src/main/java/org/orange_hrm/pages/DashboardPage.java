@@ -11,16 +11,21 @@ public class DashboardPage extends BasePage {
     @FindBy(xpath = "//span[text()='Admin']")
     private WebElement adminMenuButton;
 
-    @FindBy(css = ".oxd-userdropdown-name")
-    private WebElement loggedEmployeeName;
+    @FindBy(xpath = "//span[text()='My Info']")
+    private WebElement myInfoButton;
+
+    @FindBy(xpath = "//h6[text()='Personal Details']")
+    private WebElement personalDetailsTitle;
 
     public DashboardPage goToAdminPage() {
         clickButton(adminMenuButton);
         return this;
     }
 
-    public String getLoggedEmployeeName() {
-        return getElementText(loggedEmployeeName);
+    public DashboardPage goToMyInfoPage() {
+        clickButton(myInfoButton);
+        waitForElementToAppear(personalDetailsTitle);
+        return this;
     }
 
     public boolean isBrandBannerPresent() {
