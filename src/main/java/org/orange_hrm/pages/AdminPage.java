@@ -83,9 +83,6 @@ public class AdminPage extends BasePage {
     @FindBy(xpath = "//span[contains(@class, 'oxd-input-field-error-message')]")
     private WebElement inputErrorMessage;
 
-    @FindBy(className = "oxd-loading-spinner")
-    private WebElement loadingSpinner;
-
     @FindBy(className = "orangehrm-container")
     private WebElement searchResultsContainer;
 
@@ -186,7 +183,7 @@ public class AdminPage extends BasePage {
 
         for (WebElement row : usersList) {
             String text = row.getText();
-            if (text.contains(username) && text.contains(role) && text.contains(employeeName) && text.contains(status)) {
+            if (text.equals(username) && text.equals(role) && text.equals(employeeName) && text.equals(status)) {
                 return true;
             }
         }
