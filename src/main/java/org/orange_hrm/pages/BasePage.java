@@ -57,7 +57,7 @@ public class BasePage {
 
     private void scrollToElementAndClick(WebElement element) {
         try {
-            actions.scrollToElement(element).click().build().perform();
+            actions.scrollToElement(element).click(element).build().perform();
         } catch (Exception e) {
             moveToElementAndClick(element);
         }
@@ -74,7 +74,7 @@ public class BasePage {
     private void clickViaJS(WebElement element) {
         try {
             ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", element);
-        } catch (TimeoutException e) {
+        } catch (WebDriverException e) {
             throw new RuntimeException("Not able to click the element " + element);
         }
     }
@@ -97,7 +97,7 @@ public class BasePage {
 
     private void scrollToElementAndType(WebElement element, String text) {
         try {
-            actions.scrollToElement(element).sendKeys(text).build().perform();
+            actions.scrollToElement(element).click(element).sendKeys(text).build().perform();
         } catch (Exception e) {
             moveToElementAndType(element, text);
         }
@@ -105,7 +105,7 @@ public class BasePage {
 
     private void moveToElementAndType(WebElement element, String text) {
         try {
-            actions.moveToElement(element).sendKeys(text).build().perform();
+            actions.moveToElement(element).click(element).sendKeys(text).build().perform();
         } catch (Exception e) {
             typeViaJS(element, text);
         }
@@ -113,8 +113,11 @@ public class BasePage {
 
     private void typeViaJS(WebElement element, String text) {
         try {
-            ((JavascriptExecutor) getDriver()).executeScript("arguments[0].value = arguments[1];", element, text);
-        } catch (TimeoutException e) {
+            ((JavascriptExecutor) getDriver()).executeScript(
+                    "arguments[0].value = arguments[1];" +
+                            "arguments[0].dispatchEvent(new Event('input', {bubbles: true}))"
+                    , element, text);
+        } catch (WebDriverException e) {
             throw new RuntimeException("Not able to send the text " + text + "to the element " + element);
         }
     }

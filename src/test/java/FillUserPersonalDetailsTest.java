@@ -1,10 +1,14 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.orange_hrm.models.Employee;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.MyInfoPage;
 
 import java.time.LocalDate;
+
+import static org.orange_hrm.utils.FilePaths.ANDRZEJ_NEW_TEST_FILE;
+import static org.orange_hrm.utils.FilePaths.ANDRZEJ_TEST_FILE;
 
 public class FillUserPersonalDetailsTest extends BaseTest {
 
@@ -24,63 +28,64 @@ public class FillUserPersonalDetailsTest extends BaseTest {
     @Test
     public void updatedPersonalDetailsShouldBeVisibleInProfile() {
 
-        String firstName = "Marcin";
-        String lastName = "Nowacki";
+        Employee employee = Employee.builder()
+                .firstName("Marcin")
+                .middleName("Tomasz")
+                .lastName("Nowacki")
+                .employeeId("MNowacki")
+                .otherId("1233223")
+                .driverLicenseNumber("546756")
+                .licenseExpiryDate(LocalDate.of(2026, 12, 22))
+                .nationality("Polish")
+                .maritalStatus("Married")
+                .dateOfBirth(LocalDate.of(1990, 9, 21))
+                .gender("Male")
+                .build();
 
         myInfoPage
-                .enterFirstName(firstName)
-                .enterMiddleName("Tomasz")
-                .enterLastName(lastName)
-                .enterEmployeeId("JKowalski")
-                .enterOtherId("123321")
-                .enterDriverLicenseNumber("54541")
-                .openLicenseExpiryDateCalendar()
-                .openYearDropdown()
-                .selectYear("2026")
-                .openMonthDropdown()
-                .selectMonth("December")
-                .selectDay("22")
+                .enterFirstName(employee.getFirstName())
+                .enterMiddleName(employee.getMiddleName())
+                .enterLastName(employee.getLastName())
+                .enterEmployeeId(employee.getEmployeeId())
+                .enterOtherId(employee.getOtherId())
+                .enterDriverLicenseNumber(employee.getDriverLicenseNumber())
+                .selectLicenseExpiryDate(employee.getLicenseExpiryDate())
                 .expandNationalityOptions()
-                .selectNationality("Polish")
+                .selectNationality(employee.getNationality())
                 .expandMaritalStatusesOptions()
-                .selectMaritalStatus("Married")
-                .openDateOfBirthCalendar()
-                .openYearDropdown()
-                .selectYear("1990")
-                .openMonthDropdown()
-                .selectMonth("September")
-                .selectDay("11")
-                .chooseGender("Male")
+                .selectMaritalStatus(employee.getMaritalStatus())
+                .selectDateOfBirth(employee.getDateOfBirth())
+                .chooseGender(employee.getGender())
                 .savePersonalFields()
                 .refreshPage();
 
-        Assertions.assertEquals(myInfoPage.getLoggedEmployeeName(), firstName + " " + lastName);
+        Assertions.assertEquals(employee.getFirstName() + " " + employee.getLastName(), myInfoPage.getLoggedEmployeeName());
     }
 
     @Test
     public void updateCustomFieldsShouldBeSavedSuccessfully() {
 
-        String bloodType = "A-";
-        String testFieldInput = "abc";
+        Employee employee = Employee.builder()
+                .bloodType("B+")
+                .testField("999")
+                .build();
 
         myInfoPage
                 .expandBloodTypes()
-                .selectBloodType(bloodType)
-                .enterTestField(testFieldInput)
+                .selectBloodType(employee.getBloodType())
+                .enterTestField(employee.getTestField())
                 .saveCustomFields();
 
-        Assertions.assertEquals(bloodType + " " + testFieldInput, myInfoPage.getCustomFieldsValues());
+        Assertions.assertEquals(employee.getBloodType() + " " + employee.getTestField(), myInfoPage.getCustomFieldsValues());
     }
 
     @Test
     public void addedAndRemovedAttachmentShouldNotBeVisibleInAttachmentsTable() {
 
-        String fileRelativePath = "src/test/resources/files/andrzejtest.jfif";
-
         myInfoPage
                 .clickAddAttachmentsButton()
                 .addCommentToAttachment("Andrzej testuje")
-                .uploadAttachment(fileRelativePath)
+                .uploadAttachment(ANDRZEJ_TEST_FILE)
                 .saveAttachment();
 
         Assertions.assertTrue(myInfoPage.isAttachmentPresentInTable("andrzejtest.jfif"), "Uploaded file was not found");
@@ -89,22 +94,19 @@ public class FillUserPersonalDetailsTest extends BaseTest {
                 .deleteAttachment("andrzejtest.jfif")
                 .clickConfirmDeletionButton();
 
-        Assertions.assertFalse(myInfoPage.isAttachmentPresentInTable("andrzejnewtest.jfif"), "Uploaded file was not found");
+        Assertions.assertFalse(myInfoPage.isAttachmentPresentInTable("andrzejtest.jfif"), "Uploaded file was not found");
     }
 
     @Test
     public void replacedAttachmentShouldBeVisibleInAttachmentsTable() {
 
-        String initialFileRelativePath = "src/test/resources/files/andrzejtest.jfif";
-        String newFileRelativePath = "src/test/resources/files/andrzejnewtest.jfif";
-
         myInfoPage
                 .clickAddAttachmentsButton()
                 .addCommentToAttachment("Andrzej testuje")
-                .uploadAttachment(initialFileRelativePath)
+                .uploadAttachment(ANDRZEJ_TEST_FILE)
                 .saveAttachment()
                 .editAttachment("andrzejtest.jfif")
-                .uploadAttachment(newFileRelativePath)
+                .uploadAttachment(ANDRZEJ_NEW_TEST_FILE)
                 .saveAttachment();
 
         Assertions.assertTrue(myInfoPage.isAttachmentPresentInTable("andrzejnewtest.jfif"), "Uploaded file was not found");
@@ -113,13 +115,12 @@ public class FillUserPersonalDetailsTest extends BaseTest {
     @Test
     public void dateOfAddedAttachmentShouldEqualTodayDate() {
 
-        String fileRelativePath = "src/test/resources/files/andrzejtest.jfif";
         String expectedDate = LocalDate.now().toString();
 
         myInfoPage
                 .clickAddAttachmentsButton()
                 .addCommentToAttachment("Andrzej testuje")
-                .uploadAttachment(fileRelativePath)
+                .uploadAttachment(ANDRZEJ_TEST_FILE)
                 .saveAttachment();
 
         Assertions.assertEquals(expectedDate, myInfoPage.getAttachmentDate("andrzejtest.jfif"));

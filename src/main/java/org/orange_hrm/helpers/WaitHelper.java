@@ -33,7 +33,9 @@ public class WaitHelper {
 
     public void waitForVisibilityOfElements(List<WebElement> webElements) {
         try {
-            fluentWait.until(ExpectedConditions.visibilityOfAllElements(webElements.get(0)));
+            fluentWait.until(ExpectedConditions.visibilityOfAllElements(webElements));
+            //TODO:
+            //Wait, który będzie scrollował aż nie znajdzie tekstu
         } catch (TimeoutException e) {
             throw new TimeoutException("Elements " + webElements + " not found");
         }

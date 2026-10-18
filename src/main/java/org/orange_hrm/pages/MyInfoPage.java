@@ -3,6 +3,7 @@ package org.orange_hrm.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -165,6 +166,21 @@ public class MyInfoPage extends BasePage {
         return this;
     }
 
+    public MyInfoPage selectLicenseExpiryDate(LocalDate localDate) {
+        String year = String.valueOf(localDate.getYear());
+        String month = ((String.valueOf(localDate.getMonth()).charAt(0)) + (String.valueOf(localDate.getMonth())).substring(1).toLowerCase());
+        String day = String.valueOf(localDate.getDayOfMonth());
+
+        openLicenseExpiryDateCalendar();
+        openYearDropdown();
+        selectYear(year);
+        openMonthDropdown();
+        selectMonth(month);
+        selectDay(day);
+
+        return this;
+    }
+
     public MyInfoPage openDateOfBirthCalendar() {
         clickButton(dateOfBirthDatePicker);
         return this;
@@ -192,6 +208,21 @@ public class MyInfoPage extends BasePage {
 
     public MyInfoPage selectDay(String day) {
         chooseOptionFromList(calendarDaysList, day);
+        return this;
+    }
+
+    public MyInfoPage selectDateOfBirth(LocalDate localDate) {
+        String year = String.valueOf(localDate.getYear());
+        String month = ((String.valueOf(localDate.getMonth()).charAt(0)) + (String.valueOf(localDate.getMonth())).substring(1).toLowerCase());
+        String day = String.valueOf(localDate.getDayOfMonth());
+
+        openDateOfBirthCalendar();
+        openYearDropdown();
+        selectYear(year);
+        openMonthDropdown();
+        selectMonth(month);
+        selectDay(day);
+
         return this;
     }
 
