@@ -1,25 +1,27 @@
 package org.orange_hrm.models;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.Value;
 
 import java.time.LocalDate;
 
-@Getter
+@Data
+@Value
 @Builder
 public class Employee {
-
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String employeeId;
-    private String otherId;
-    private String driverLicenseNumber;
-    private LocalDate licenseExpiryDate;
-    private String nationality;
-    private String maritalStatus;
-    private LocalDate dateOfBirth;
-    private String gender;
-    private String bloodType;
-    private String testField;
+    
+    String firstName;
+    String middleName;
+    String lastName;
+    String employeeId;
+    String otherId;
+    String driverLicenseNumber;
+    LocalDate licenseExpiryDate;
+    String nationality;
+    String maritalStatus;
+    LocalDate dateOfBirth;
+    String gender;
+    String bloodType;
+    String testField;
 }

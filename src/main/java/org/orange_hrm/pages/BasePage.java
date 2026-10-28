@@ -9,10 +9,18 @@ import org.orange_hrm.helpers.WaitHelper;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import static org.orange_hrm.driver.DriverSingleton.getDriver;
 
 public class BasePage {
+
+    //TODO:
+    //Zapisywać powtarzalne błędy ze strony
+
+    //final Logger logger = LogManager.getLogManager().getLogger(getClass());
+    protected final Logger logger = LogManager.getLogger(getClass());
 
     private Actions actions;
 
@@ -36,8 +44,15 @@ public class BasePage {
 
     public void refreshPage() {
         getDriver().navigate().refresh();
+        logger.info("Page was refreshed");
+        logger.info("Waiting for a banner to appear {}", brandBanner);
         waitHelper.waitForVisibility(brandBanner);
     }
+
+    //WARN --> mogę informować że jest jakiś problem ale jest kontynuowany
+    //ERROR
+    //TODO:
+    //Zastosować w metodach w Base Page Info, Warn i Error
 
     public String getLoggedEmployeeName() {
         return getElementText(loggedEmployeeName);
@@ -127,9 +142,11 @@ public class BasePage {
 
         element.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE);
 
-        if (!(element.getDomProperty("value") == null)) {
+        if (!(element.getDomProperty("value").equals(""))) {
             try {
                 element.clear();
+                //TODO:
+                //Poprawić zbyt ogólne Exceptiony
             } catch (Exception e) {
                 throw new RuntimeException("Not able to clear the element " + element);
             }
