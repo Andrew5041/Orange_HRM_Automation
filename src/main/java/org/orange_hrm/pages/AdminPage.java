@@ -83,9 +83,6 @@ public class AdminPage extends BasePage {
     @FindBy(xpath = "//span[contains(@class, 'oxd-input-field-error-message')]")
     private WebElement inputErrorMessage;
 
-    @FindBy(className = "oxd-loading-spinner")
-    private WebElement loadingSpinner;
-
     @FindBy(className = "orangehrm-container")
     private WebElement searchResultsContainer;
 
@@ -186,7 +183,7 @@ public class AdminPage extends BasePage {
 
         for (WebElement row : usersList) {
             String text = row.getText();
-            if (text.contains(username) && text.contains(role) && text.contains(employeeName) && text.contains(status)) {
+            if (text.equals(username) && text.equals(role) && text.equals(employeeName) && text.equals(status)) {
                 return true;
             }
         }
@@ -259,25 +256,23 @@ public class AdminPage extends BasePage {
 
         List<Integer> nonAdminRowIndices = new ArrayList<>();
 
-        for (int i = 0; i < usersList.size(); i++) {
-            String username = usernameColumn.get(i).getText().trim();
-            if (!username.equalsIgnoreCase("Admin")) {
-                nonAdminRowIndices.add(i);
+            for (int i = 0; i < usersList.size(); i++) {
+                String username = usernameColumn.get(i).getText().trim();
+                if (!username.equalsIgnoreCase("Admin")) {
+                    nonAdminRowIndices.add(i);
+                }
             }
-        }
+            if (nonAdminRowIndices.isEmpty()){
+                throw new IllegalStateException("There is only Admin user in this list");
+            }
 
-        Random random = new Random();
+            int randomRow = new Random().nextInt(0, nonAdminRowIndices.size());
 
-        int min = 0;
-        int max = nonAdminRowIndices.size();
-
-        int randomRow = random.nextInt(min, max);
-
-        return Arrays.asList(
-                usernameColumn.get(randomRow).getText().trim(),
-                roleColumn.get(randomRow).getText().trim(),
-                employeeColumn.get(randomRow).getText().trim(),
-                statusColumn.get(randomRow).getText().trim());
+            return Arrays.asList(
+                    usernameColumn.get(randomRow).getText().trim(),
+                    roleColumn.get(randomRow).getText().trim(),
+                    employeeColumn.get(randomRow).getText().trim(),
+                    statusColumn.get(randomRow).getText().trim());
     }
 
     public List<String> getUserDetailsFromTable(String expectedUsername) {

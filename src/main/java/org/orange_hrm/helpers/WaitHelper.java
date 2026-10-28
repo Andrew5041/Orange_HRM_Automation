@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.orange_hrm.driver.DriverSingleton;
 
 import java.time.Duration;
+import java.util.List;
 
 public class WaitHelper {
 
@@ -30,13 +31,22 @@ public class WaitHelper {
         return webElement;
     }
 
-    public WebElement waitForInvisibility(WebElement webElement) {
+    public void waitForVisibilityOfElements(List<WebElement> webElements) {
+        try {
+            fluentWait.until(ExpectedConditions.visibilityOfAllElements(webElements));
+            //TODO:
+            //Wait, który będzie scrollował aż nie znajdzie tekstu
+        } catch (TimeoutException e) {
+            throw new TimeoutException("Elements " + webElements + " not found");
+        }
+    }
+
+    public void waitForInvisibility(WebElement webElement) {
         try {
             fluentWait.until(ExpectedConditions.invisibilityOf(webElement));
         } catch (TimeoutException e) {
             throw new TimeoutException("Element " + webElement + " not found");
         }
-        return webElement;
     }
 
     public WebElement waitForElementToBeClickable(WebElement webElement) {
