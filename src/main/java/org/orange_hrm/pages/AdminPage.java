@@ -1,8 +1,8 @@
 package org.orange_hrm.pages;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.orange_hrm.models.UserData;
 
 import java.util.*;
 
@@ -93,25 +93,22 @@ public class AdminPage extends BasePage {
     private WebElement noRecordsFoundPopup;
 
     public AdminPage enterUsername(String username) {
-        if (!(usernameInput.getDomProperty("value") == null)) {
-            usernameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE);
-        }
-        usernameInput.sendKeys(username);
+        type(usernameInput, username);
         return this;
     }
 
     public AdminPage enterEmployeeName(String employeeName) {
-        employeeNameInput.sendKeys(employeeName);
+        type(employeeNameInput, employeeName);
         return this;
     }
 
     public AdminPage enterPassword(String password) {
-        passwordInput.sendKeys(password);
+        type(passwordInput, password);
         return this;
     }
 
     public AdminPage enterConfirmPassword(String password) {
-        confirmPasswordInput.sendKeys(password);
+        type(confirmPasswordInput, password);
         return this;
     }
 
@@ -179,17 +176,6 @@ public class AdminPage extends BasePage {
         return this;
     }
 
-    public boolean isUserPresentInTable(String username, String role, String employeeName, String status) {
-
-        for (WebElement row : usersList) {
-            String text = row.getText();
-            if (text.equals(username) && text.equals(role) && text.equals(employeeName) && text.equals(status)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public AdminPage removeSearchedUser(String username) {
 
         for (int i = 0; i < usersList.size(); i++) {
@@ -199,14 +185,8 @@ public class AdminPage extends BasePage {
                 return this;
             }
         }
-        throw new RuntimeException("Username " + username + " was not found in the table");
+        throw new NoSuchElementException("Username " + username + " was not found in the table");
     }
-
-/*        if(!usernameColumn.isEmpty() && usernameColumn.get(0).getText().trim().equals(username)) {
-            trashButton.get(0).click();
-            return this;
-        }
-        throw new RuntimeException("Username " + username + " was not found in the table");*/
 
     public AdminPage editSearchedUser(String username) {
 
@@ -217,7 +197,7 @@ public class AdminPage extends BasePage {
                 return this;
             }
         }
-        throw new RuntimeException("Username " + username + " was not found in the table");
+        throw new NoSuchElementException("Username " + username + " was not found in the table");
     }
 
     public AdminPage markCheckboxForSearchedUser(String username) {
@@ -229,7 +209,7 @@ public class AdminPage extends BasePage {
                 return this;
             }
         }
-        throw new RuntimeException("Username " + username + " was not found in the table");
+        throw new NoSuchElementException("Username " + username + " was not found in the table");
     }
 
     public boolean isUsernameFieldEmpty() {
@@ -252,27 +232,26 @@ public class AdminPage extends BasePage {
         return isUsernameFieldEmpty() && isUserRoleFieldEmpty() && isEmployeeNameFieldEmpty() && isStatusFieldEmpty();
     }
 
-    public List<String> getRandomUserDetailsFromTable() {
+    public boolean isUserPresentInTable(String username, String role, String employeeName, String status) {
 
-        List<Integer> nonAdminRowIndices = new ArrayList<>();
-
-            for (int i = 0; i < usersList.size(); i++) {
-                String username = usernameColumn.get(i).getText().trim();
-                if (!username.equalsIgnoreCase("Admin")) {
-                    nonAdminRowIndices.add(i);
-                }
+        for (WebElement row : usersList) {
+            String text = row.getText();
+            if (text.equals(username) && text.equals(role) && text.equals(employeeName) && text.equals(status)) {
+                return true;
             }
-            if (nonAdminRowIndices.isEmpty()){
-                throw new IllegalStateException("There is only Admin user in this list");
+        }
+        return false;
+    }
+
+    public boolean isUserPresentInTableByRecord(UserData expectedUser) {
+
+        for (WebElement row : usersList) {
+            String text = row.getText();
+            if (text.contains(expectedUser.username()) && text.contains(expectedUser.userRole()) && text.contains(expectedUser.employeeName()) && text.contains(expectedUser.status())) {
+                return true;
             }
-
-            int randomRow = new Random().nextInt(0, nonAdminRowIndices.size());
-
-            return Arrays.asList(
-                    usernameColumn.get(randomRow).getText().trim(),
-                    roleColumn.get(randomRow).getText().trim(),
-                    employeeColumn.get(randomRow).getText().trim(),
-                    statusColumn.get(randomRow).getText().trim());
+        }
+        return false;
     }
 
     public List<String> getUserDetailsFromTable(String expectedUsername) {
@@ -289,6 +268,51 @@ public class AdminPage extends BasePage {
             }
         }
         throw new NoSuchElementException("User " + expectedUsername + " was not found in results table");
+    }
+
+    public List<UserData> getUserDetailsFromTableByRecord(String expectedUsername) {
+
+        List<UserData> matchingUsers = new ArrayList<>();
+
+        for (int i = 0; i < usersList.size(); i++) {
+            String actualUsername = usernameColumn.get(i).getText().trim();
+            if (actualUsername.equals(expectedUsername)) {
+                UserData userData = new UserData(
+                        actualUsername,
+                        roleColumn.get(i).getText().trim(),
+                        employeeColumn.get(i).getText().trim(),
+                        statusColumn.get(i).getText().trim()
+                );
+                matchingUsers.add(userData);
+            }
+        }
+        if (matchingUsers.isEmpty()) {
+            throw new NoSuchElementException("User " + expectedUsername + " was not found in results table");
+        }
+        return matchingUsers;
+    }
+
+    public List<String> getRandomUserDetailsFromTable() {
+
+        List<Integer> nonAdminRowIndices = new ArrayList<>();
+
+        for (int i = 0; i < usersList.size(); i++) {
+            String username = usernameColumn.get(i).getText().trim();
+            if (!username.equalsIgnoreCase("Admin")) {
+                nonAdminRowIndices.add(i);
+            }
+        }
+        if (nonAdminRowIndices.isEmpty()) {
+            throw new IllegalStateException("There is only Admin user in this list");
+        }
+
+        int randomRow = new Random().nextInt(0, nonAdminRowIndices.size());
+
+        return Arrays.asList(
+                usernameColumn.get(randomRow).getText().trim(),
+                roleColumn.get(randomRow).getText().trim(),
+                employeeColumn.get(randomRow).getText().trim(),
+                statusColumn.get(randomRow).getText().trim());
     }
 
     public boolean isNoRecordsFoundTextVisible() {
