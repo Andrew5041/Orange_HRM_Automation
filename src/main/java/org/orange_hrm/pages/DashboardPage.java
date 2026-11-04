@@ -14,8 +14,14 @@ public class DashboardPage extends BasePage {
     @FindBy(xpath = "//span[text()='My Info']")
     private WebElement myInfoButton;
 
+    @FindBy(xpath = "//span[text()='PIM']")
+    private WebElement PIMButton;
+
     @FindBy(xpath = "//h6[text()='Personal Details']")
     private WebElement personalDetailsTitle;
+
+    @FindBy(xpath = "//h5[text()='Employee Information']")
+    private WebElement employeeInformationTitle;
 
     public DashboardPage goToAdminPage() {
         clickButton(adminMenuButton);
@@ -25,6 +31,12 @@ public class DashboardPage extends BasePage {
     public DashboardPage goToMyInfoPage() {
         clickButton(myInfoButton);
         waitForElementToAppear(personalDetailsTitle);
+        return this;
+    }
+
+    public DashboardPage goToPIMPage() {
+        clickButton(PIMButton);
+        waitForElementToAppear(employeeInformationTitle);
         return this;
     }
 

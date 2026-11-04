@@ -6,7 +6,6 @@ import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.AdminPage;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +14,9 @@ public class UserSearchTest extends BaseTest {
     private AdminPage adminPage;
 
     private DashboardPage dashboardPage;
+
+    //TODO:
+    //Czym jest dependency injection -> do napisania Before dla adminPage, DashBoardPage
 
     @ParameterizedTest
     @CsvSource({
@@ -107,7 +109,6 @@ public class UserSearchTest extends BaseTest {
         assertTrue(adminPage.isUserPresentInTable(username, role, loggedEmployeeName, status), "User " + username + " with role " + role + " with Employee Name " + loggedEmployeeName + " and status " + status + " was not found");
     }
 
-
     @Test
     public void registeredUsersShouldBeFoundWhenSearchingByAllFiltersByRecord() {
 
@@ -161,27 +162,6 @@ public class UserSearchTest extends BaseTest {
         );
     }
 
-    @Test
-    public void registeredUsersShouldBeFoundInTableWithoutFilteringByRecord() {
-
-        dashboardPage = new DashboardPage();
-
-        adminPage = new AdminPage();
-
-        UserData userData = new UserData(
-                "Admin",
-                "Admin",
-                dashboardPage.getLoggedEmployeeName(),
-                "Enabled"
-        );
-
-        dashboardPage.goToAdminPage();
-
-        List<UserData> actualUserDetails = adminPage.getUserDetailsFromTableByRecord(userData.username());
-
-        assertTrue(actualUserDetails.contains(userData), "User " + userData.username() + " with role " + userData.userRole() + " with Employee Name " + userData.employeeName() + " and status " + userData.status() + " was not found");
-    }
-
     @ParameterizedTest
     @CsvSource({
             "Admin, Admin, Enabled",
@@ -202,17 +182,7 @@ public class UserSearchTest extends BaseTest {
 
         dashboardPage.goToAdminPage();
 
-        List<UserData> matchingUsers = adminPage.getUserDetailsFromTableByRecord(expectedUser.username());
-
-        UserData foundUser = matchingUsers.stream()
-                .filter(user -> user.employeeName().equals(expectedUser.employeeName()) && user.userRole().equals(expectedUser.userRole()) && user.status().equals(expectedUser.status())).findFirst().orElseThrow(() -> new NoSuchElementException("No matching users has been found"));
-
-        assertAll(
-                () -> assertEquals(expectedUser.username(), foundUser.username(), "Username does not match the given user"),
-                () -> assertEquals(expectedUser.userRole(), foundUser.userRole(), "Role does not match the given user"),
-                () -> assertEquals(expectedUser.employeeName(), foundUser.employeeName(), "EmployeeName does not match the given user"),
-                () -> assertEquals(expectedUser.status(), foundUser.status(), "Status does not match the given user")
-        );
+        assertTrue(adminPage.isUserFoundInTable(expectedUser), "User" + expectedUser + " has not been found");
     }
 
     @ParameterizedTest

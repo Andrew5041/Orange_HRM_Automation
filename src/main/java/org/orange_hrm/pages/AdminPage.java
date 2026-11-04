@@ -270,26 +270,27 @@ public class AdminPage extends BasePage {
         throw new NoSuchElementException("User " + expectedUsername + " was not found in results table");
     }
 
-    public List<UserData> getUserDetailsFromTableByRecord(String expectedUsername) {
+    private List<UserData> getUserDetailsFromTableByRecord() {
 
         List<UserData> matchingUsers = new ArrayList<>();
 
+        waitForElementToDisappear(loadingSpinner);
+
         for (int i = 0; i < usersList.size(); i++) {
-            String actualUsername = usernameColumn.get(i).getText().trim();
-            if (actualUsername.equals(expectedUsername)) {
-                UserData userData = new UserData(
-                        actualUsername,
-                        roleColumn.get(i).getText().trim(),
-                        employeeColumn.get(i).getText().trim(),
-                        statusColumn.get(i).getText().trim()
-                );
-                matchingUsers.add(userData);
-            }
-        }
-        if (matchingUsers.isEmpty()) {
-            throw new NoSuchElementException("User " + expectedUsername + " was not found in results table");
+            UserData userData = new UserData(
+                    usernameColumn.get(i).getText().trim(),
+                    roleColumn.get(i).getText().trim(),
+                    employeeColumn.get(i).getText().trim(),
+                    statusColumn.get(i).getText().trim()
+            );
+            matchingUsers.add(userData);
         }
         return matchingUsers;
+    }
+
+    public boolean isUserFoundInTable(UserData userData) {
+
+        return getUserDetailsFromTableByRecord().stream().anyMatch(user -> user.equals(userData));
     }
 
     public List<String> getRandomUserDetailsFromTable() {
