@@ -1,17 +1,19 @@
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.orange_hrm.models.EmployeePIM;
 import org.orange_hrm.pages.DashboardPage;
 import org.orange_hrm.pages.PIMPage;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AddSearchPIMUserTest extends BaseTest {
 
     private DashboardPage dashboardPage;
 
     private PIMPage pimPage;
 
-    int userOrder = 0;
+    private int userOrder = 0;
 
     @ParameterizedTest
     @CsvSource({
@@ -20,11 +22,26 @@ public class AddSearchPIMUserTest extends BaseTest {
             "Marta, Ewa, TestStream, QA Engineer, Part-Time Contract",
             "Tomasz, Jan, TestStream, Software Engineer, Part-Time Contract",
     })
-    public void test1(String firstName, String middleName, String lastName, String jobTitle, String employmentStatus) {
+    public void shouldAddAndVerifyEmployeesTest(String firstName, String middleName, String lastName, String jobTitle, String employmentStatus) {
 
         dashboardPage = new DashboardPage();
 
         pimPage = new PIMPage();
+
+        if (userOrder == 0) {
+            dashboardPage.goToPIMPage();
+            pimPage
+                    .clickEmployeeListButton()
+                    .enterEmployeeName("TestStream")
+                    .clickSearchButton();
+
+            if (pimPage.getNumberOfFoundUsers() > 0) {
+                pimPage
+                        .clickSelectAllInTableCheckbox()
+                        .clickDeleteSelectedButton()
+                        .clickConfirmDeletionButton();
+            }
+        }
 
         dashboardPage.goToPIMPage();
 
@@ -65,10 +82,14 @@ public class AddSearchPIMUserTest extends BaseTest {
                 .enterEmployeeName(employeePIM.lastName())
                 .clickSearchButton();
 
-        //To poniżej nie zadziała bo po każdym dodaniu employee będzie to sprawdzane. Może użyć jakiegoś @order i zrobić dwa niezależne od siebie testy ?
+        Assertions.assertEquals(userOrder, pimPage.getNumberOfFoundUsers());
 
-        Assertions.assertEquals(4, pimPage.getNumberOfFoundUsers());
+        String expectedFullName = employeePIM.firstName() + " " + employeePIM.middleName() + " " + employeePIM.lastName();
 
-        Assertions.assertEquals("Anna Maria TestStream", pimPage.getEmployeeFromTheList(employeePIM));
+        Assertions.assertEquals(expectedFullName, pimPage.getEmployeeFromTheList(employeePIM));
+
+        if (userOrder == 4) {
+            Assertions.assertEquals("Anna Maria TestStream" + " " + "Marta Ewa TestStream", pimPage.getQAEngineersEmployees().get(0) + " " + pimPage.getQAEngineersEmployees().get(1));
+        }
     }
 }

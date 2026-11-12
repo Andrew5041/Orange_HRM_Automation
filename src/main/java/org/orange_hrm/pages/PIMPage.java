@@ -10,7 +10,6 @@ import java.util.NoSuchElementException;
 
 public class PIMPage extends BasePage {
 
-
     @FindBy(xpath = "//button[text()=' Add ']")
     private WebElement addButton;
 
@@ -29,10 +28,10 @@ public class PIMPage extends BasePage {
     @FindBy(xpath = "//label[text()='Employee Name']/ancestor::div[contains(@class, 'oxd-input-group')]//input")
     private WebElement employeeNameInput;
 
-    @FindBy(xpath = " //a[text()='Job']")
+    @FindBy(xpath = "//a[text()='Job']")
     private WebElement jobSideMenuButton;
 
-    @FindBy(xpath = " //a[text()='Employee List']")
+    @FindBy(xpath = "//a[text()='Employee List']")
     private WebElement employeeListUpperMenuButton;
 
     @FindBy(xpath = "//label[text()='Job Title']/ancestor::div[contains(@class, 'oxd-input-group')]//div[@class='oxd-select-wrapper']")
@@ -77,6 +76,17 @@ public class PIMPage extends BasePage {
     @FindBy(xpath = "//div[contains(@class, 'oxd-table-body')]//div[@role='row']/div[@role='cell'][6]")
     private List<WebElement> employmentStatusColumn;
 
+    @FindBy(xpath = "//div[contains(@class, 'oxd-table-header')]//div[contains(@class, 'oxd-checkbox-wrapper')]")
+    private WebElement tableHeaderCheckbox;
+
+    @FindBy(xpath = "//div[contains(@class, 'orangehrm-horizontal-padding')]//button[contains(@class, 'oxd-button--label-danger')]")
+    private WebElement deleteSelectedButton;
+
+    @FindBy(xpath = "//div[contains(@class, 'orangehrm-modal-footer')]//button[contains(@class, 'oxd-button--medium oxd-button--label-danger')]")
+    private WebElement confirmDeletionButton;
+
+    @FindBy(xpath = "//h6[text()='Personal Details']/ancestor::div[contains(@class, 'orangehrm-horizontal-padding')]//form")
+    private WebElement personalDetailsContainer;
 
     public PIMPage clickAddButton() {
         clickButton(addButton);
@@ -119,10 +129,12 @@ public class PIMPage extends BasePage {
     public PIMPage saveEmployeeDetails() {
         clickButton(addEmployeeSaveButton);
         waitForElementToDisappear(loadingSpinner);
+        waitForElementToAppear(personalDetailsContainer);
         return this;
     }
 
     public PIMPage clickJobSideMenuButton() {
+        waitForElementToAppear(jobSideMenuButton);
         clickButton(jobSideMenuButton);
         return this;
     }
@@ -228,5 +240,33 @@ public class PIMPage extends BasePage {
                 .filter(emp -> emp.jobTitle().equals(employeePIM.jobTitle()) && emp.employmentStatus().equals(employeePIM.employmentStatus()))
                 .map(emp -> (emp.firstName() + " " + emp.middleName() + " " + emp.lastName()))
                 .findFirst().orElseThrow(() -> new NoSuchElementException("User was not found"));
+    }
+
+    public List<String> getQAEngineersEmployees() {
+
+        List<EmployeePIM> filteredEmployeeList = getEmployeeDetailsFromList();
+
+        return filteredEmployeeList.stream()
+                .filter(e -> e.jobTitle().equals("QA Engineer"))
+                .map(e -> e.firstName() + " " + e.middleName() + " " + e.lastName())
+                .sorted()
+                .toList();
+    }
+
+    public PIMPage clickSelectAllInTableCheckbox() {
+        waitForElementToAppear(tableHeaderCheckbox);
+        clickButton(tableHeaderCheckbox);
+        return this;
+    }
+
+    public PIMPage clickDeleteSelectedButton() {
+        clickButton(deleteSelectedButton);
+        return this;
+    }
+
+    public PIMPage clickConfirmDeletionButton() {
+        clickButton(confirmDeletionButton);
+        waitForElementToDisappear(loadingSpinner);
+        return this;
     }
 }
