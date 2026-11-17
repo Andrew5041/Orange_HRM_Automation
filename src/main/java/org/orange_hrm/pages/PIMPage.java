@@ -6,7 +6,7 @@ import org.orange_hrm.models.EmployeePIM;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class PIMPage extends BasePage {
 
@@ -115,11 +115,15 @@ public class PIMPage extends BasePage {
     }
 
     public String enterEmployeeID(boolean shouldIncrement) {
+
         String currentEmployeeID = getEmployeeID();
 
         if (shouldIncrement) {
             int nextEmployeeID = Integer.parseInt(getEmployeeID().substring(1)) + 1;
-            currentEmployeeID = "0" + String.valueOf(nextEmployeeID);
+
+            currentEmployeeID = new StringBuilder("0")
+                    .append(nextEmployeeID)
+                    .toString();
             type(employeeIdInput, currentEmployeeID);
 
         }
@@ -221,26 +225,41 @@ public class PIMPage extends BasePage {
                 middleName = nameParts[1];
             }
 
-            EmployeePIM employeePIM = new EmployeePIM(
+            employeePIMS.add(new EmployeePIM(
                     id,
                     firstName,
                     middleName,
                     lastName,
                     jobTitle,
                     employmentStatus
-            );
-            employeePIMS.add(employeePIM);
+            ));
         }
         return employeePIMS;
     }
 
     public String getEmployeeFromTheList(EmployeePIM employeePIM) {
 
-        return getEmployeeDetailsFromList().stream()
+   /*     return getEmployeeDetailsFromList().stream()
                 .filter(emp -> emp.jobTitle().equals(employeePIM.jobTitle()) && emp.employmentStatus().equals(employeePIM.employmentStatus()))
-                .map(emp -> (emp.firstName() + " " + emp.middleName() + " " + emp.lastName()))
+                //.map(emp -> (emp.firstName() + " " + emp.middleName() + " " + emp.lastName()))
                 .findFirst().orElseThrow(() -> new NoSuchElementException("User was not found"));
+
+        .map(emp -> (emp.firstName() + " " + emp.middleName() + " " + emp.lastName()))
+*/
+        Optional<EmployeePIM> aaa = getEmployeeDetailsFromList().stream()
+                .filter(emp -> emp.jobTitle().equals(employeePIM.jobTitle()) && emp.employmentStatus().equals(employeePIM.employmentStatus()))
+                .findFirst();
+        // .map(emp -> (emp.firstName() + " " + emp.middleName() + " " + emp.lastName()))
+
+        aaa.ifPresentOrElse(e -> System.out.println(e.firstName() + " " + e.lastName()), () -> System.out.println("No such user"));
+        //aaa.ifPresent();
+
+        //Mamy operacje pośrednie i końcowe
+        //ifPresent - jest metodą końcową
+
+        return "";
     }
+
 
     public List<String> getQAEngineersEmployees() {
 
@@ -250,6 +269,24 @@ public class PIMPage extends BasePage {
                 .filter(e -> e.jobTitle().equals("QA Engineer"))
                 .map(e -> e.firstName() + " " + e.middleName() + " " + e.lastName())
                 .sorted()
+                .toList();
+    }
+
+    public Optional<EmployeePIM> getQAEngineerDataByID(String employeeID) {
+
+        return getEmployeeDetailsFromList().stream()
+                .filter(e -> e.employeeID().equals(employeeID))
+                .findFirst();
+    }
+
+    public String getQAEngineerEmploymentStatus(String employeeID) {
+
+        return getQAEngineerDataByID(employeeID).map(e -> e.employmentStatus()).orElseThrow(() -> new AssertionError("User with ID " + employeeID + " was not found"));
+    }
+
+    public List<String> getDisplayedEmployeeIDs() {
+        return getEmployeeDetailsFromList().stream()
+                .map(e -> e.employeeID())
                 .toList();
     }
 
