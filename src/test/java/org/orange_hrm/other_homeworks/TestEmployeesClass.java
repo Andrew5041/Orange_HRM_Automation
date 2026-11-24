@@ -165,10 +165,3 @@ public class TestEmployeesClass {
         Assertions.assertEquals("No active user", getActiveEmployeeJobTitle(testEmployees, "Piotr"));
     }
 }
-
-
-
-
-
-
-
