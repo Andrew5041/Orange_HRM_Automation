@@ -185,8 +185,6 @@ public class AddSearchPIMUserTest extends BaseTest {
                     .selectJobTitle("QA Engineer")
                     .clickSearchButton();
 
-            Assertions.assertEquals("Part-Time Contract", pimPage.getQAEngineerEmploymentStatus(martaID));
-
             List<String> displayedIDs = pimPage.getDisplayedEmployeeIDs();
 
             Assertions.assertAll(

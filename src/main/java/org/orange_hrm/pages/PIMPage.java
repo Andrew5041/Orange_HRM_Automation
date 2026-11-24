@@ -281,7 +281,9 @@ public class PIMPage extends BasePage {
 
     public String getQAEngineerEmploymentStatus(String employeeID) {
 
-        return getQAEngineerDataByID(employeeID).map(e -> e.employmentStatus()).orElseThrow(() -> new AssertionError("User with ID " + employeeID + " was not found"));
+        return getQAEngineerDataByID(employeeID)
+                .map(e -> e.employmentStatus())
+                .orElseThrow(() -> new AssertionError("User with ID " + employeeID + " was not found"));
     }
 
     public List<String> getDisplayedEmployeeIDs() {
