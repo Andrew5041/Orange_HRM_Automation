@@ -30,7 +30,9 @@ public class TestEmployeesClass {
 
         //1
         System.out.println("1");
-        getActiveEmployees(testEmployees).forEach(e -> System.out.println(e.name()));
+        System.out.println(getActiveEmployees(testEmployees).stream()
+                .map(e -> e.name())
+                .toList());
 
         //2
         System.out.println("2");
@@ -38,7 +40,9 @@ public class TestEmployeesClass {
 
         //3
         System.out.println("3");
-        getEmployeesFromWarsaw(testEmployees).forEach(e -> System.out.println(e.name()));
+        System.out.println(getEmployeesFromWarsaw(testEmployees).stream()
+                .map(e -> e.name())
+                .toList());
 
         //4
         System.out.println("4");
